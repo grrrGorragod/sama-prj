@@ -3,6 +3,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Antiforgery;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection;
@@ -13,7 +14,6 @@ using SamaApi.Common;
 using SamaApi.Data;
 using SamaApi.Repositories;
 using SamaApi.Services;
-   using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;
@@ -93,6 +93,7 @@ builder.Services.AddScoped<ReviewService>();
 builder.Services.AddScoped<ProgressService>();
 builder.Services.AddScoped<FavoriteService>();
 builder.Services.AddScoped<UserImporter>();
+builder.Services.AddScoped<DemoActivitySeeder>();
 builder.Services.AddSingleton<CsvReportExporter>();
 builder.Services.AddSingleton<EvidenceFilePolicy>();
 
@@ -131,6 +132,14 @@ if (args.Length > 0 && args[0] == "import")
     using var scope = app.Services.CreateScope();
     await DbSeeder.SeedAsync(scope.ServiceProvider.GetRequiredService<SamaDbContext>());
     return await scope.ServiceProvider.GetRequiredService<UserImporter>().RunAsync(teachers, students);
+}
+
+// ---- command line: dotnet run -- seed-demo   (sample activities so the teacher dashboard has varied numbers) ----
+if (args.Length > 0 && args[0] == "seed-demo")
+{
+    using var scope = app.Services.CreateScope();
+    await DbSeeder.SeedAsync(scope.ServiceProvider.GetRequiredService<SamaDbContext>());
+    return await scope.ServiceProvider.GetRequiredService<DemoActivitySeeder>().RunAsync();
 }
 
 if (config.GetValue<bool>("Seed:Enabled"))

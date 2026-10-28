@@ -6,6 +6,7 @@ services:
     rootDir: backend/SamaApi
     dockerfilePath: ./Dockerfile
     plan: free
+    region: singapore
     envVars:
       - key: ConnectionStrings__Supabase
         sync: false

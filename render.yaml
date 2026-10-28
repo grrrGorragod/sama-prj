@@ -1,0 +1,36 @@
+# Render Blueprint — New → Blueprint → pick the repo. Fill in the secrets (sync: false) in the dashboard.
+services:
+  - type: web
+    name: sama-api
+    runtime: docker
+    rootDir: backend/SamaApi
+    dockerfilePath: ./Dockerfile
+    plan: free
+    envVars:
+      - key: ConnectionStrings__Supabase
+        sync: false
+      - key: Supabase__Url
+        sync: false
+      - key: Supabase__ServiceKey
+        sync: false
+      - key: Supabase__Bucket
+        value: evidence
+      - key: Auth__CookieSecure
+        value: "true"
+      - key: DataProtection__UseDatabase
+        value: "true"
+
+  - type: web
+    name: sama-web
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    routes:
+      # change the host if Render gave your API a different URL
+      - type: rewrite
+        source: /api/*
+        destination: https://sama-api.onrender.com/api/*
+      - type: rewrite
+        source: /*
+        destination: /index.html

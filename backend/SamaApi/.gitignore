@@ -1,0 +1,6 @@
+bin/
+obj/
+.keys/
+evidence-storage/
+import-passwords-*.csv
+appsettings.Local.json

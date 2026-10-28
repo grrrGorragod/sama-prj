@@ -20,6 +20,7 @@ public class ActivityService(CurrentUser current, ActivityRepository activities,
         var now = DateTime.UtcNow;
         var a = Activity.Create(student, year, category, now);
         a.Edit(student.Id, p.Title, p.Description, p.ActivityDate, p.StartTime, p.EndTime, now);
+        a.ChooseReviewer(await ResolveReviewerAsync(p.ReviewerId));
         await activities.AddAsync(a);
         await activities.SaveAsync();
         return ActivityItem.From(a);
@@ -32,6 +33,7 @@ public class ActivityService(CurrentUser current, ActivityRepository activities,
         if (a.AcademicYear != AcademicService.ParseYear(p.TermId) || a.CategoryId != Ids.Parse(p.CategoryId))
             throw BusinessException.Invalid("เปลี่ยนหมวดหรือเทอมของกิจกรรมเดิมไม่ได้");
         a.Edit(a.StudentId, p.Title, p.Description, p.ActivityDate, p.StartTime, p.EndTime, DateTime.UtcNow);
+        a.ChooseReviewer(await ResolveReviewerAsync(p.ReviewerId));
         await activities.SaveAsync();
         return ActivityItem.From(a);
     }
@@ -61,7 +63,7 @@ public class ActivityService(CurrentUser current, ActivityRepository activities,
     {
         var a = await activities.GetAsync(id) ?? throw BusinessException.Missing();
         var user = await current.GetAsync();
-        var allowed = (user is Student && a.StudentId == user.Id) || (user is Teacher && a.ReviewerId == user.Id);
+        var allowed = (user is Student && a.StudentId == user.Id) || (user is Teacher && a.ReviewerId == user.Id && a.Status != ActivityStatus.Draft);
         return allowed ? a : throw BusinessException.Missing();
     }
 
@@ -83,6 +85,12 @@ public class ActivityService(CurrentUser current, ActivityRepository activities,
     {
         if (expected is null || a.Version != expected)
             throw BusinessException.Conflict("ข้อมูลเปลี่ยนแปลงแล้ว กรุณาโหลดใหม่ก่อนดำเนินการ");
+    }
+
+    private async Task<Teacher?> ResolveReviewerAsync(string? id)
+    {
+        if (string.IsNullOrWhiteSpace(id)) return null;
+        return await users.GetTeacherAsync(Ids.Parse(id)) ?? throw BusinessException.Invalid("ไม่พบครูที่เลือก");
     }
 
     private async Task<Activity> OwnedAsync(long id)

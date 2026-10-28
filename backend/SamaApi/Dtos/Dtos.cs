@@ -21,7 +21,7 @@ public record CategoryDto(string Id, string Code, string Name, string? Descripti
     RequirementMetric? Metric, int? Target);
 
 public record SaveRequest(string TermId, string CategoryId, string? Title, string? Description,
-    DateOnly? ActivityDate, TimeOnly? StartTime, TimeOnly? EndTime, long? ExpectedVersion);
+    DateOnly? ActivityDate, TimeOnly? StartTime, TimeOnly? EndTime, long? ExpectedVersion, string? ReviewerId = null);
 public record SubmitRequest(string ReviewerId, long? ExpectedVersion);
 
 public record ActivityItem(string Id, string Title, string Description, string CategoryId, string CategoryCode,
@@ -53,7 +53,7 @@ public record RemoveAttachmentRequest(long? ExpectedVersion);
 public record BulkSelection(string ActivityId, long? ExpectedVersion);
 public record BulkReviewRequest(List<BulkSelection> Items, ReviewDecision Decision, string? Reason);
 
-public record TeacherView(string Id, string FullName, string Department, bool Favorite);
+public record TeacherView(string Id, string FullName, string Department, bool Favorite, bool Advisor = false);
 
 public record CategoryProgressDto(string CategoryId, string Code, string Name, string? Description, string? Color,
     RequirementMetric Metric, int Target, long ApprovedValue, long Remaining, double Percent, long ApprovedCount,

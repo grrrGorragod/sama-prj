@@ -25,7 +25,7 @@ public class ActivityRepository(SamaDbContext db)
     public async Task<PageResult<Activity>> SearchAsync(long ownerId, bool reviewerView, ActivityFilter f, int page, int size)
     {
         var q = db.Activities.Include(a => a.Category).Include(a => a.Student).Include(a => a.Reviewer).AsQueryable();
-        q = reviewerView ? q.Where(a => a.ReviewerId == ownerId) : q.Where(a => a.StudentId == ownerId);
+        q = reviewerView ? q.Where(a => a.ReviewerId == ownerId && a.Status != ActivityStatus.Draft) : q.Where(a => a.StudentId == ownerId);
         if (f.Year is { } y) q = q.Where(a => a.AcademicYear == y);
         if (f.Status is { } s) q = q.Where(a => a.Status == s);
         if (f.CategoryId is { } c) q = q.Where(a => a.CategoryId == c);

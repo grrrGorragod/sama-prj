@@ -100,6 +100,14 @@ public class Activity
         Touch(now);
     }
 
+    /// <summary>Remembers the teacher picked while the activity is a draft (the teacher cannot see drafts).</summary>
+    public void ChooseReviewer(Teacher? reviewer)
+    {
+        if (Status != Draft) return;
+        Reviewer = reviewer;
+        ReviewerId = reviewer?.Id;
+    }
+
     public void Submit(long actorId, Teacher? reviewer, DateTime now)
     {
         if (StudentId != actorId) throw BusinessException.Missing();

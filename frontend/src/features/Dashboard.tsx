@@ -84,7 +84,7 @@ function StudentDashboard({ me, term, navigate, onCreate, onView }: Props) {
           <span>
             <Star size={22} />
           </span>
-          ครูที่ชื่นชอบ
+          ครูที่ปรึกษา
         </button>
         <button className="desktop-add-action" onClick={() => onCreate()}>
           <span>

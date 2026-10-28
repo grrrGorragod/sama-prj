@@ -30,7 +30,7 @@ export default function Favorites({
       }),
     onSuccess: (_, t) =>
       notify(
-        t.favorite ? "นำครูออกจากรายการโปรดแล้ว" : "เพิ่มครูที่ชื่นชอบแล้ว",
+        t.favorite ? "นำครูออกจากครูที่ปรึกษาแล้ว" : "เพิ่มครูที่ปรึกษาแล้ว",
       ),
   });
   function teacherRow(t: Teacher) {
@@ -47,17 +47,22 @@ export default function Favorites({
           />
         )}
         <div>
-          <h3>{t.fullName}</h3>
+          <h3>
+            {t.fullName}
+            {t.advisor && <span className="advisor-badge">ประจำห้อง</span>}
+          </h3>
           <small>{t.department}</small>
         </div>
         <button
           className={"star-button " + (t.favorite ? "is-favorite" : "")}
           aria-label={
-            (t.favorite ? "นำออกจากรายการโปรด " : "เพิ่มรายการโปรด ") +
-            t.fullName
+            t.advisor
+              ? "ครูที่ปรึกษาประจำห้อง " + t.fullName
+              : (t.favorite ? "นำออกจากครูที่ปรึกษา " : "เพิ่มเป็นครูที่ปรึกษา ") +
+                t.fullName
           }
           aria-pressed={t.favorite}
-          disabled={mutation.isPending}
+          disabled={mutation.isPending || !!t.advisor}
           onClick={() => mutation.mutate(t)}
         >
           <Star size={21} fill={t.favorite ? "currentColor" : "none"} />
@@ -68,7 +73,7 @@ export default function Favorites({
   return (
     <div className="reference-favorites">
       <div className="page-heading centered">
-        <h1>ครูที่ชื่นชอบ</h1>
+        <h1>ครูที่ปรึกษา</h1>
       </div>
       <div className="search-input">
         <Search size={19} />
@@ -83,7 +88,7 @@ export default function Favorites({
         />
       </div>
       {mutation.error && <ErrorBox error={mutation.error} />}
-      <h2>ครูที่ชื่นชอบ</h2>
+      <h2>ครูที่ปรึกษา</h2>
       {favorites.isPending ? (
         <Loading />
       ) : favorites.error ? (
@@ -96,7 +101,7 @@ export default function Favorites({
         </div>
       ) : (
         <p className="muted favorite-empty">
-          กดดาวข้างชื่อครูเพื่อเพิ่มรายการโปรด
+          กดดาวข้างชื่อครูเพื่อเพิ่มเป็นครูที่ปรึกษา
         </p>
       )}
       <h2>ครูทั้งหมด</h2>

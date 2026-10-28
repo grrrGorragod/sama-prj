@@ -74,7 +74,7 @@ export default function Profile({
         </button>
         {me.role === "STUDENT" && (
           <button onClick={onFavorites}>
-            ครูที่ชื่นชอบ
+            ครูที่ปรึกษา
             <ChevronRight size={21} />
           </button>
         )}

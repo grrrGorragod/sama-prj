@@ -41,7 +41,7 @@ const titles: Record<Route, string> = {
   activities: "รายการกิจกรรม",
   reviews: "ตรวจกิจกรรม",
   classrooms: "แดชบอร์ดห้องเรียน",
-  favorites: "ครูที่ชื่นชอบ",
+  favorites: "ครูที่ปรึกษา",
   profile: "บัญชีผู้ใช้",
 };
 function initialRoute(): Route {
@@ -173,7 +173,7 @@ export default function App() {
           label: "รายการกิจกรรม",
           icon: ClipboardCheck,
         },
-        { id: "favorites" as Route, label: "ครูที่ชื่นชอบ", icon: Star },
+        { id: "favorites" as Route, label: "ครูที่ปรึกษา", icon: Star },
       ]
     : [
         { id: "dashboard" as Route, label: "หน้าหลัก", icon: Home },
@@ -193,7 +193,7 @@ export default function App() {
     },
     {
       id: (student ? "favorites" : "classrooms") as Route,
-      label: student ? "ครูโปรด" : "ห้องเรียน",
+      label: student ? "ครูที่ปรึกษา" : "ห้องเรียน",
       icon: student ? Star : Users,
     },
     { id: "profile" as Route, label: "บัญชี", icon: UserRound },

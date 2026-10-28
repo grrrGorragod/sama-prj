@@ -11,7 +11,7 @@ import type {
   Teacher,
   Term,
 } from "../lib/types";
-import { api, ApiError, date } from "../lib/api";
+import { api, ApiError } from "../lib/api";
 import { Modal, ErrorBox, CategoryIcon } from "../components/ui";
 import { EvidenceField } from "../components/EvidenceFiles";
 import { useActivityEvidence } from "./useActivityEvidence";
@@ -33,7 +33,6 @@ export default function ActivityEditor({
 }) {
   const a = initial.activity;
   const directCategory = !!initial.categoryId && !a;
-  const [reviewerStep, setReviewerStep] = useState(false);
   const [saved, setSaved] = useState<Activity | undefined>(a);
   const savedRef = useRef(saved);
   const client = useQueryClient();
@@ -103,7 +102,6 @@ export default function ActivityEditor({
       setEnd(latest.endTime?.slice(0, 5) || "");
       setCategoryId(latest.categoryId);
       setReviewer(latest.reviewerId || "");
-      setReviewerStep(false);
       evidence.resetSelection();
       client.setQueryData(["attachments", current.id], attachments);
       remember(latest);
@@ -143,6 +141,7 @@ export default function ActivityEditor({
             body: JSON.stringify({
               termId: previous?.termId || term.id,
               categoryId,
+              reviewerId: reviewerId || null,
               title,
               description,
               activityDate: activityDate || null,
@@ -219,21 +218,6 @@ export default function ActivityEditor({
     event.preventDefault();
     const button = (event.nativeEvent as SubmitEvent)
       .submitter as HTMLButtonElement;
-    if (
-      button?.value === "submit" &&
-      directCategory &&
-      !reviewerStep &&
-      title.trim() &&
-      description.trim() &&
-      activityDate &&
-      startTime &&
-      endTime &&
-      startTime < endTime
-    ) {
-      mutation.reset();
-      setReviewerStep(true);
-      return;
-    }
     mutation.mutate(button?.value === "submit");
   }
   const favoriteIds = new Set(favorites.data?.map((t) => t.id));
@@ -244,9 +228,7 @@ export default function ActivityEditor({
   return (
     <Modal
       variant="page"
-      title={
-        reviewerStep ? "เลือกครูผู้ตรวจ" : a ? "แก้ไขกิจกรรม" : "เพิ่มกิจกรรม"
-      }
+      title={a ? "แก้ไขกิจกรรม" : "เพิ่มกิจกรรม"}
       onClose={() => {
         if (!mutation.isPending && !reloading) onClose();
       }}
@@ -296,167 +278,137 @@ export default function ActivityEditor({
               </strong>
             </div>
           </div>
-          {!reviewerStep && (
-            <>
-              {!directCategory && (
-                <div className="form-row">
-                  <label>
-                    หมวดกิจกรรม
-                    <select
-                      value={categoryId}
-                      onChange={(e) => setCategoryId(e.target.value)}
-                      disabled={!!saved}
-                      required
-                    >
-                      {categories.map((c) => (
-                        <option key={c.id} value={c.id}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="term-field">
-                    ปี / ภาคเรียน
-                    <input value={a?.termLabel || term.label} readOnly />
-                  </label>
-                </div>
-              )}
+          {!directCategory && (
+            <div className="form-row">
               <label>
-                ชื่อกิจกรรม <span className="required">*</span>
-                <input
-                  aria-label="ชื่อกิจกรรม"
-                  value={title}
-                  onChange={(e) => {
-                    setTitleTouched(true);
-                    setTitle(e.target.value);
-                  }}
-                  maxLength={200}
-                  placeholder="เช่น วิ่งออกกำลังกายกับเพื่อน"
-                />
-              </label>
-              <label>
-                วันที่ทำกิจกรรม <span className="required">*</span>
-                <input
-                  type="date"
-                  min={term.startsOn}
-                  max={term.endsOn}
-                  value={activityDate}
-                  onChange={(e) => setDate(e.target.value)}
-                />
-              </label>
-              <div className="form-row">
-                <label>
-                  เวลาเริ่มต้น <span className="required">*</span>
-                  <input
-                    type="time"
-                    value={startTime}
-                    onChange={(e) => setStart(e.target.value)}
-                  />
-                </label>
-                <label>
-                  เวลาสิ้นสุด <span className="required">*</span>
-                  <input
-                    type="time"
-                    value={endTime}
-                    onChange={(e) => setEnd(e.target.value)}
-                  />
-                </label>
-              </div>
-              <label>
-                รายละเอียด / ลักษณะกิจกรรม <span className="required">*</span>
-                <textarea
-                  rows={directCategory ? 2 : 4}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  maxLength={4000}
-                  placeholder="เล่าว่าคุณได้ทำอะไร มีหน้าที่อย่างไร และได้เรียนรู้อะไรบ้าง…"
-                />
-              </label>
-              <EvidenceField
-                activityId={saved?.id}
-                files={evidence.query.data || []}
-                pending={evidence.pending}
-                removed={evidence.removed}
-                onSelect={evidence.addFiles}
-                onRemovePending={evidence.removePending}
-                onRemoveSaved={evidence.removeSaved}
-                onUndoRemoval={evidence.undoRemoval}
-                error={evidence.selectionError}
-                loading={!!saved?.id && evidence.query.isPending}
-                loadError={evidence.query.error}
-                retry={() => void evidence.query.refetch()}
-                disabled={mutation.isPending}
-              />
-            </>
-          )}
-          {(!directCategory || reviewerStep) && (
-            <>
-              {!directCategory && <div className="form-divider" />}
-              {reviewerStep && (
-                <div className="reviewer-step-intro">
-                  <h3>ส่งกิจกรรมให้ครูตรวจสอบ</h3>
-                  <p>
-                    {title} · {date(activityDate)}
-                  </p>
-                  <p className="evidence-help">
-                    หลักฐาน{" "}
-                    {(evidence.query.data || []).filter(
-                      (f) => !evidence.removed.includes(f.id),
-                    ).length + evidence.pending.length}{" "}
-                    ไฟล์
-                  </p>
-                  <button
-                    type="button"
-                    className="text-link"
-                    onClick={() => setReviewerStep(false)}
-                  >
-                    กลับไปแก้ไขข้อมูลกิจกรรม
-                  </button>
-                </div>
-              )}
-              <label>
-                ค้นหาครูผู้ตรวจ
-                <input
-                  value={teacherSearch}
-                  onChange={(e) => setTeacherSearch(e.target.value)}
-                  placeholder="ค้นหาชื่อครู…"
-                />
-              </label>
-              <label>
-                ส่งกิจกรรมให้ครู <span className="required">*</span>
+                หมวดกิจกรรม
                 <select
-                  value={reviewerId}
-                  onChange={(e) => setReviewer(e.target.value)}
+                  value={categoryId}
+                  onChange={(e) => setCategoryId(e.target.value)}
+                  disabled={!!saved}
+                  required
                 >
-                  <option value="">เลือกครูผู้ตรวจ</option>
-                  {reviewerId && !options.some((t) => t.id === reviewerId) && (
-                    <option value={reviewerId}>
-                      {a?.reviewerName || "ครูที่เลือกไว้"}
-                    </option>
-                  )}
-                  {options.map((t) => (
-                    <option key={t.id} value={t.id}>
-                      {t.favorite ? "★ " : ""}
-                      {t.fullName} · {t.department}
+                  {categories.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
                     </option>
                   ))}
                 </select>
               </label>
-              {teachers.error && (
-                <ErrorBox
-                  error={teachers.error}
-                  retry={() => void teachers.refetch()}
-                />
-              )}
-              <div className="form-note">
-                <Info size={16} />
-                <span>
-                  บันทึกแบบร่างได้แม้ข้อมูลยังไม่ครบ
-                  และกลับมาแก้ไขก่อนส่งตรวจได้
-                </span>
-              </div>
-            </>
+              <label className="term-field">
+                ปี / ภาคเรียน
+                <input value={a?.termLabel || term.label} readOnly />
+              </label>
+            </div>
           )}
+          <label>
+            ชื่อกิจกรรม <span className="required">*</span>
+            <input
+              aria-label="ชื่อกิจกรรม"
+              value={title}
+              onChange={(e) => {
+                setTitleTouched(true);
+                setTitle(e.target.value);
+              }}
+              maxLength={200}
+              placeholder="เช่น วิ่งออกกำลังกายกับเพื่อน"
+            />
+          </label>
+          <label>
+            วันที่ทำกิจกรรม <span className="required">*</span>
+            <input
+              type="date"
+              min={term.startsOn}
+              max={term.endsOn}
+              value={activityDate}
+              onChange={(e) => setDate(e.target.value)}
+            />
+          </label>
+          <div className="form-row">
+            <label>
+              เวลาเริ่มต้น <span className="required">*</span>
+              <input
+                type="time"
+                value={startTime}
+                onChange={(e) => setStart(e.target.value)}
+              />
+            </label>
+            <label>
+              เวลาสิ้นสุด <span className="required">*</span>
+              <input
+                type="time"
+                value={endTime}
+                onChange={(e) => setEnd(e.target.value)}
+              />
+            </label>
+          </div>
+          <label>
+            รายละเอียด / ลักษณะกิจกรรม <span className="required">*</span>
+            <textarea
+              rows={directCategory ? 2 : 4}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              maxLength={4000}
+              placeholder="เล่าว่าคุณได้ทำอะไร มีหน้าที่อย่างไร และได้เรียนรู้อะไรบ้าง…"
+            />
+          </label>
+          <EvidenceField
+            activityId={saved?.id}
+            files={evidence.query.data || []}
+            pending={evidence.pending}
+            removed={evidence.removed}
+            onSelect={evidence.addFiles}
+            onRemovePending={evidence.removePending}
+            onRemoveSaved={evidence.removeSaved}
+            onUndoRemoval={evidence.undoRemoval}
+            error={evidence.selectionError}
+            loading={!!saved?.id && evidence.query.isPending}
+            loadError={evidence.query.error}
+            retry={() => void evidence.query.refetch()}
+            disabled={mutation.isPending}
+          />
+          {!directCategory && <div className="form-divider" />}
+          <label>
+            ค้นหาครูผู้ตรวจ
+            <input
+              value={teacherSearch}
+              onChange={(e) => setTeacherSearch(e.target.value)}
+              placeholder="ค้นหาชื่อครู…"
+            />
+          </label>
+          <label>
+            ส่งกิจกรรมให้ครู <span className="required">*</span>
+            <select
+              value={reviewerId}
+              onChange={(e) => setReviewer(e.target.value)}
+            >
+              <option value="">เลือกครูผู้ตรวจ</option>
+              {reviewerId && !options.some((t) => t.id === reviewerId) && (
+                <option value={reviewerId}>
+                  {a?.reviewerName || "ครูที่เลือกไว้"}
+                </option>
+              )}
+              {options.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.favorite ? "★ " : ""}
+                  {t.fullName} · {t.department}
+                </option>
+              ))}
+            </select>
+          </label>
+          {teachers.error && (
+            <ErrorBox
+              error={teachers.error}
+              retry={() => void teachers.refetch()}
+            />
+          )}
+          <div className="form-note">
+            <Info size={16} />
+            <span>
+              บันทึกแบบร่างได้แม้ข้อมูลยังไม่ครบ
+              และกลับมาแก้ไขก่อนส่งตรวจได้
+            </span>
+          </div>
           {mutation.error && <ErrorBox error={mutation.error} />}
           <div className="modal-actions">
             <button
@@ -476,9 +428,7 @@ export default function ActivityEditor({
               {mutation.isPending
                 ? "กำลังบันทึก…"
                 : directCategory
-                  ? reviewerStep
-                    ? "ยืนยันส่งกิจกรรม"
-                    : "ส่งกิจกรรมให้ครู"
+                  ? "ส่งกิจกรรมให้ครู"
                   : "ส่งให้ครูตรวจ"}
             </button>
           </div>

@@ -134,4 +134,5 @@ export interface Teacher {
   fullName: string;
   department: string;
   favorite: boolean;
+  advisor?: boolean;
 }

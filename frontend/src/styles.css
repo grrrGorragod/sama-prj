@@ -3623,3 +3623,15 @@ a:focus-visible {
     font-size: 10px;
   }
 }
+
+.advisor-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: #efe6f7;
+  color: #7a4ea0;
+  font-size: 11px;
+  font-weight: 600;
+  vertical-align: middle;
+}

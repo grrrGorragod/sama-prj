@@ -83,19 +83,19 @@ test("favorites, profile and classroom export use live data", async ({
 }) => {
   await login(page, "student");
   await page
-    .getByRole("button", { name: "ครูที่ชื่นชอบ", exact: true })
+    .getByRole("button", { name: "ครูที่ปรึกษา", exact: true })
     .first()
     .click();
   await page
     .getByRole("button", {
-      name: "เพิ่มรายการโปรด ครูปณิธาน สุขสวัสดิ์",
+      name: "เพิ่มเป็นครูที่ปรึกษา ครูปณิธาน สุขสวัสดิ์",
       exact: true,
     })
     .click();
   await expect(
     page
       .getByRole("button", {
-        name: "นำออกจากรายการโปรด ครูปณิธาน สุขสวัสดิ์",
+        name: "นำออกจากครูที่ปรึกษา ครูปณิธาน สุขสวัสดิ์",
         exact: true,
       })
       .first(),
@@ -265,19 +265,13 @@ test("reference screens render on mobile and desktop without page overflow", asy
     .getByLabel("รายละเอียด / ลักษณะกิจกรรม")
     .fill("ออกกำลังกายและฝึกแบดมินตันร่วมกับเพื่อน");
   await exerciseForm
-    .getByRole("button", { name: "ส่งกิจกรรมให้ครู", exact: true })
-    .click();
-  await expect(
-    exerciseForm.getByRole("heading", { name: "เลือกครูผู้ตรวจ", exact: true }),
-  ).toBeVisible();
-  await exerciseForm
     .getByLabel("ส่งกิจกรรมให้ครู")
     .selectOption({ label: "★ ครูอรพรรณ วิริยะ · กลุ่มสาระวิทยาศาสตร์" });
   await exerciseForm.screenshot({
     path: "test-results/reference-reviewer-choice.png",
   });
   await exerciseForm
-    .getByRole("button", { name: "ยืนยันส่งกิจกรรม", exact: true })
+    .getByRole("button", { name: "ส่งกิจกรรมให้ครู", exact: true })
     .click();
   await expect(exerciseForm).not.toBeVisible();
   await page.goto("/#activities");
@@ -302,7 +296,7 @@ test("reference screens render on mobile and desktop without page overflow", asy
     fullPage: true,
   });
   await page
-    .getByRole("button", { name: "ครูที่ชื่นชอบ", exact: true })
+    .getByRole("button", { name: "ครูที่ปรึกษา", exact: true })
     .last()
     .click();
   await expect(page.locator(".reference-teacher-row").first()).toBeVisible();

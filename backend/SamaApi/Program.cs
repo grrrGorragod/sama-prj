@@ -13,6 +13,7 @@ using SamaApi.Common;
 using SamaApi.Data;
 using SamaApi.Repositories;
 using SamaApi.Services;
+using Microsoft.AspNetCore.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 var config = builder.Configuration;

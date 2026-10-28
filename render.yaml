@@ -28,10 +28,9 @@ services:
     buildCommand: npm ci && npm run build
     staticPublishPath: dist
     routes:
-      # change the host if Render gave your API a different URL
       - type: rewrite
         source: /api/*
-        destination: https://sama-api.onrender.com/api/*
+        destination: https://sama-api-i26z.onrender.com/api/*
       - type: rewrite
         source: /*
         destination: /index.html

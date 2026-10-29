@@ -70,10 +70,13 @@ export default function ActivityEditor({
         "/teachers?search=" + encodeURIComponent(teacherSearch),
       ),
   });
-  const favorites = useQuery({
-    queryKey: ["favorites"],
+  const advisors = useQuery({
+    queryKey: ["advisor"],
     queryFn: () => api<Teacher[]>("/me/favorite-teachers"),
   });
+  // the classroom advisor is the default reviewer until the student picks someone else
+  const reviewer =
+    reviewerId || advisors.data?.find((t) => t.advisor)?.id || "";
   const evidence = useActivityEvidence(saved?.id);
   function remember(activity: Activity) {
     savedRef.current = activity;
@@ -126,7 +129,7 @@ export default function ActivityEditor({
           !activityDate ||
           !startTime ||
           !endTime ||
-          !reviewerId)
+          !reviewer)
       )
         throw new Error(
           "กรุณากรอกชื่อ รายละเอียด วันที่ เวลา และเลือกครูผู้ตรวจให้ครบ",
@@ -141,7 +144,7 @@ export default function ActivityEditor({
             body: JSON.stringify({
               termId: previous?.termId || term.id,
               categoryId,
-              reviewerId: reviewerId || null,
+              reviewerId: reviewer || null,
               title,
               description,
               activityDate: activityDate || null,
@@ -158,7 +161,7 @@ export default function ActivityEditor({
           result = await api<Activity>("/activities/" + result.id + "/submit", {
             method: "POST",
             body: JSON.stringify({
-              reviewerId,
+              reviewerId: reviewer,
               expectedVersion: result.version,
             }),
           });
@@ -220,10 +223,10 @@ export default function ActivityEditor({
       .submitter as HTMLButtonElement;
     mutation.mutate(button?.value === "submit");
   }
-  const favoriteIds = new Set(favorites.data?.map((t) => t.id));
+  const advisorIds = new Set(advisors.data?.map((t) => t.id));
   const options = [
-    ...(favorites.data || []),
-    ...(teachers.data?.items || []).filter((t) => !favoriteIds.has(t.id)),
+    ...(advisors.data || []),
+    ...(teachers.data?.items || []).filter((t) => !advisorIds.has(t.id)),
   ];
   return (
     <Modal
@@ -379,18 +382,18 @@ export default function ActivityEditor({
           <label>
             ส่งกิจกรรมให้ครู <span className="required">*</span>
             <select
-              value={reviewerId}
+              value={reviewer}
               onChange={(e) => setReviewer(e.target.value)}
             >
               <option value="">เลือกครูผู้ตรวจ</option>
-              {reviewerId && !options.some((t) => t.id === reviewerId) && (
-                <option value={reviewerId}>
+              {reviewer && !options.some((t) => t.id === reviewer) && (
+                <option value={reviewer}>
                   {a?.reviewerName || "ครูที่เลือกไว้"}
                 </option>
               )}
               {options.map((t) => (
                 <option key={t.id} value={t.id}>
-                  {t.favorite ? "★ " : ""}
+                  {t.advisor ? "ครูที่ปรึกษา · " : ""}
                   {t.fullName} · {t.department}
                 </option>
               ))}

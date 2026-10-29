@@ -344,7 +344,7 @@ export default function App() {
               {active === "classrooms" && (
                 <Classrooms termId={selectedTerm} notify={setToast} />
               )}
-              {active === "favorites" && <Favorites notify={done} />}
+              {active === "favorites" && <Favorites />}
               {active === "profile" && (
                 <Profile
                   me={user}

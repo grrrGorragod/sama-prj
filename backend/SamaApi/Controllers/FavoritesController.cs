@@ -16,10 +16,4 @@ public class FavoritesController(FavoriteService favorites) : ControllerBase
 
     [HttpGet("me/favorite-teachers")]
     public Task<List<TeacherView>> List() => favorites.ListAsync();
-
-    [HttpPut("me/favorite-teachers/{id:long}")]
-    public async Task<IActionResult> Add(long id) { await favorites.AddAsync(id); return NoContent(); }
-
-    [HttpDelete("me/favorite-teachers/{id:long}")]
-    public async Task<IActionResult> Remove(long id) { await favorites.RemoveAsync(id); return NoContent(); }
 }

@@ -37,7 +37,7 @@ public class ProgressService(CurrentUser current, UserRepository users, Academic
         var rows = students.Count == 0 ? new List<ActivityRow>() : await activities.RowsAsync(students.Select(s => s.Id).ToList(), year);
         var summaries = students.Select(s => Summarize(s, year, rules, rows)).ToList();
         var completed = summaries.Count(s => s.Completed);
-        return new ClassroomSummaryDto(Ids.Str(room.Id), room.Name, year.ToString(), students.Count, completed,
+        return new ClassroomSummaryDto(Ids.Str(room.Id), RoomName.Display(room.Name), year.ToString(), students.Count, completed,
             students.Count - completed, summaries);
     }
 
@@ -69,7 +69,7 @@ public class ProgressService(CurrentUser current, UserRepository users, Academic
         var draft = Total(ActivityStatus.Draft);
         var minutesAll = mine.Where(r => r.Status == ActivityStatus.Approved).Sum(r => r.DurationMinutes);
 
-        return new SummaryDto(Ids.Str(s.Id), s.FullName, s.StudentCode, s.Classroom?.Name ?? "", s.ClassNumber ?? 0,
+        return new SummaryDto(Ids.Str(s.Id), s.FullName, s.StudentCode, RoomName.Display(s.Classroom?.Name), s.ClassNumber ?? 0,
             year.ToString(), AcademicCalendar.Label(year), configured, completed, overall,
             approvedAll + pending + rejected + draft, approvedAll, pending, rejected, draft, minutesAll, categories);
     }

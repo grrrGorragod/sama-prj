@@ -60,7 +60,7 @@ export default function Profile({
             </p>
             <p>
               {summary.data
-                ? `${summary.data.classroom} เลขที่ ${summary.data.rollNumber}`
+                ? `ชั้น ${summary.data.classroom} เลขที่ ${summary.data.rollNumber}`
                 : me.email}
             </p>
           </div>

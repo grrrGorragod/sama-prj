@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Download, ListFilter, Search, ChevronRight } from "lucide-react";
+import { Download, Search, ChevronRight } from "lucide-react";
 import type { Room, ClassroomSummary, Summary } from "../lib/types";
 import { api, downloadCsv } from "../lib/api";
 import { Loading, ErrorBox, Empty, Modal } from "../components/ui";
@@ -33,7 +33,6 @@ export default function Classrooms({
   const [student, setStudent] = useState<Summary | null>(null);
   const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState<unknown>();
-  const [filterOpen, setFilterOpen] = useState(false);
   const [category, setCategory] = useState("");
   async function download() {
     if (!room) return;
@@ -76,16 +75,6 @@ export default function Classrooms({
     <div className="reference-classroom">
       <div className="page-heading centered">
         <h1>แดชบอร์ดห้องเรียน</h1>
-        <button
-          className={
-            "icon-button category-filter-button " + (filterOpen ? "active" : "")
-          }
-          aria-label="เลือกหมวดกิจกรรมสำหรับสถิติ"
-          onClick={() => setFilterOpen(!filterOpen)}
-        >
-          <ListFilter size={23} />
-          <span>{category ? 1 : categories.length}</span>
-        </button>
       </div>
       <div className="classroom-controls">
         <label>
@@ -106,23 +95,21 @@ export default function Classrooms({
             ))}
           </select>
         </label>
-        {filterOpen && (
-          <label>
-            หมวดกิจกรรม
-            <select
-              aria-label="กรองสถิติตามหมวด"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              <option value="">กิจกรรมทั้งหมด</option>
-              {categories.map((c) => (
-                <option key={c.categoryId} value={c.categoryId}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </label>
-        )}
+        <label>
+          หมวดกิจกรรม
+          <select
+            aria-label="กรองสถิติตามหมวด"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option value="">กิจกรรมทั้งหมด</option>
+            {categories.map((c) => (
+              <option key={c.categoryId} value={c.categoryId}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </label>
       </div>
       {!!error && <ErrorBox error={error} />}{" "}
       {!room ? (
@@ -164,8 +151,8 @@ export default function Classrooms({
             </section>
             <p className="classroom-category-note">
               {selection
-                ? "แสดงผลตามหมวด: " + selection.name
-                : `แสดงสถิติจากกิจกรรมทั้งหมด ${categories.length} ประเภท`}
+                ? `หมวด ${selection.name} · เสร็จแล้ว = ทำครบเกณฑ์ของหมวดนี้`
+                : `ทุกหมวด (${categories.length} หมวด) · เสร็จแล้ว = ทำครบเกณฑ์ทุกหมวด ไม่ครบ = ยังขาดอย่างน้อย 1 หมวด`}
             </p>
             <button
               className="button purple-button classroom-export"

@@ -36,7 +36,7 @@ public class AcademicService(AcademicRepository academic, CurrentUser current)
     {
         var teacher = await current.TeacherAsync();
         return (await academic.GetAdvisedAsync(teacher.Id, ParseYear(termId)))
-            .Select(c => new RoomDto(Ids.Str(c.Id), c.Name)).ToList();
+            .Select(c => new RoomDto(Ids.Str(c.Id), RoomName.Display(c.Name))).ToList();
     }
 
     public async Task<List<CategoryDto>> CategoriesAsync(string termId)

@@ -72,7 +72,7 @@ function StudentDashboard({ me, term, navigate, onCreate, onView }: Props) {
   return (
     <div className="reference-home">
       <SchoolHeading />
-      <WelcomeCard me={me} subtitle={`${s.classroom} เลขที่ ${s.rollNumber}`} />
+      <WelcomeCard me={me} subtitle={`ชั้น ${s.classroom} เลขที่ ${s.rollNumber}`} />
       <div className="home-quick-actions">
         <button onClick={() => navigate("activities")}>
           <span>

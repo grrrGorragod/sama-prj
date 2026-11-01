@@ -339,10 +339,13 @@ export default function Activities({
             text={
               review
                 ? "เมื่อมีงานที่ตรงเงื่อนไข รายการจะแสดงที่นี่"
-                : "เปลี่ยนตัวกรอง หรือเริ่มบันทึกกิจกรรมใหม่"
+                : search || category || status
+                  ? "ลองเปลี่ยนตัวกรองหรือคำค้นหา"
+                  : "เริ่มบันทึกกิจกรรมใหม่"
             }
             action={
-              !review && (
+              !review &&
+              !(search || category || status) && (
                 <button className="button secondary" onClick={onCreate}>
                   <Plus size={17} />
                   เพิ่มกิจกรรม

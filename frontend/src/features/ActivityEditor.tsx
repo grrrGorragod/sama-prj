@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Check, Info, Save, Send, Search, UserCircle2 } from "lucide-react";
+import { Info, Save, Send } from "lucide-react";
 import type {
   Activity,
   AttachmentInfo,
@@ -14,7 +14,6 @@ import type {
 import { api, ApiError } from "../lib/api";
 import { Modal, ErrorBox, CategoryIcon } from "../components/ui";
 import { EvidenceField } from "../components/EvidenceFiles";
-import { PersonAvatar } from "../components/reference";
 import { useActivityEvidence } from "./useActivityEvidence";
 
 export default function ActivityEditor({
@@ -224,44 +223,6 @@ export default function ActivityEditor({
       .submitter as HTMLButtonElement;
     mutation.mutate(button?.value === "submit");
   }
-  function reviewerRow(
-    id: string,
-    name: string,
-    department: string,
-    isAdvisor?: boolean,
-  ) {
-    const selected = reviewer === id;
-    return (
-      <button
-        type="button"
-        key={id}
-        role="radio"
-        aria-checked={selected}
-        className={"reviewer-option" + (selected ? " selected" : "")}
-        disabled={mutation.isPending}
-        onClick={() => setReviewer(id)}
-      >
-        {isAdvisor ? (
-          <PersonAvatar />
-        ) : (
-          <UserCircle2
-            className="reviewer-placeholder"
-            size={36}
-            fill="#9197a3"
-            color="white"
-          />
-        )}
-        <span className="reviewer-name">
-          <strong>
-            {name}
-            {isAdvisor && <span className="advisor-badge">ประจำห้อง</span>}
-          </strong>
-          {department ? <small>{department}</small> : null}
-        </span>
-        {selected && <Check size={19} className="reviewer-check" />}
-      </button>
-    );
-  }
   const advisorIds = new Set(advisors.data?.map((t) => t.id));
   const options = [
     ...(advisors.data || []),
@@ -410,37 +371,38 @@ export default function ActivityEditor({
             disabled={mutation.isPending}
           />
           {!directCategory && <div className="form-divider" />}
-          <div className="reviewer-picker">
-            <p className="reviewer-title" id="reviewer-title">
-              ส่งกิจกรรมให้ครู <span className="required">*</span>
-            </p>
-            <div className="search-input">
-              <Search size={19} />
-              <input
-                aria-label="ค้นหาครูผู้ตรวจ"
-                value={teacherSearch}
-                onChange={(e) => setTeacherSearch(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") e.preventDefault();
-                }}
-                placeholder="ค้นหาชื่อครู…"
-              />
-            </div>
-            <div
-              className="reviewer-list"
-              role="radiogroup"
-              aria-labelledby="reviewer-title"
+          <label>
+            ค้นหาครูผู้ตรวจ
+            <input
+              value={teacherSearch}
+              onChange={(e) => setTeacherSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") e.preventDefault();
+              }}
+              placeholder="ค้นหาชื่อครู…"
+            />
+          </label>
+          <label>
+            ส่งกิจกรรมให้ครู <span className="required">*</span>
+            <select
+              value={reviewer}
+              onChange={(e) => setReviewer(e.target.value)}
             >
-              {reviewer && !options.some((t) => t.id === reviewer) &&
-                reviewerRow(reviewer, a?.reviewerName || "ครูที่เลือกไว้", "")}
-              {options.map((t) =>
-                reviewerRow(t.id, t.fullName, t.department, t.advisor),
+              <option value="">เลือกครูผู้ตรวจ</option>
+              {reviewer && !options.some((t) => t.id === reviewer) && (
+                <option value={reviewer}>
+                  {a?.reviewerName || "ครูที่เลือกไว้"}
+                </option>
               )}
-              {!options.length && !reviewer && (
-                <p className="muted">ไม่พบครูที่ค้นหา</p>
-              )}
-            </div>
-          </div>
+              {options.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.advisor ? "ครูที่ปรึกษา · " : ""}
+                  {t.fullName}
+                  {t.department ? ` · ${t.department}` : ""}
+                </option>
+              ))}
+            </select>
+          </label>
           {teachers.error && (
             <ErrorBox
               error={teachers.error}

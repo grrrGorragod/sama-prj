@@ -110,10 +110,6 @@ export default function Profile({
               <label>
                 อีเมล
                 <input type="email" value={me.email} readOnly />
-                <small>
-                  ชื่อ–นามสกุลและอีเมลแก้ไขเองไม่ได้
-                  หากต้องการเปลี่ยนกรุณาติดต่อผู้ดูแลบัญชี
-                </small>
               </label>
               <label>
                 เบอร์โทรศัพท์

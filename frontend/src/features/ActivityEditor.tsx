@@ -372,14 +372,6 @@ export default function ActivityEditor({
           />
           {!directCategory && <div className="form-divider" />}
           <label>
-            ค้นหาครูผู้ตรวจ
-            <input
-              value={teacherSearch}
-              onChange={(e) => setTeacherSearch(e.target.value)}
-              placeholder="ค้นหาชื่อครู…"
-            />
-          </label>
-          <label>
             ส่งกิจกรรมให้ครู <span className="required">*</span>
             <select
               value={reviewer}
@@ -393,11 +385,18 @@ export default function ActivityEditor({
               )}
               {options.map((t) => (
                 <option key={t.id} value={t.id}>
-                  {t.advisor ? "ครูที่ปรึกษา · " : ""}
-                  {t.fullName} · {t.department}
+                  {t.fullName}
+                  {t.department ? ` · ${t.department}` : ""}
+                  {t.advisor ? " (ครูที่ปรึกษา)" : ""}
                 </option>
               ))}
             </select>
+            <input
+              aria-label="ค้นหาครูผู้ตรวจ"
+              value={teacherSearch}
+              onChange={(e) => setTeacherSearch(e.target.value)}
+              placeholder="ไม่เจอครูที่ต้องการ? ค้นหาชื่อครู…"
+            />
           </label>
           {teachers.error && (
             <ErrorBox

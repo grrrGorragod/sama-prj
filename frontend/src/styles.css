@@ -3641,3 +3641,8 @@ input[readonly] {
   color: #6b6f7b;
   cursor: not-allowed;
 }
+
+.activity-form select,
+.activity-form input:not([type="checkbox"]):not([type="file"]) {
+  min-height: 46px;
+}

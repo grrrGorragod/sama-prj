@@ -1,2 +1,7 @@
 node_modules/
-dist/
+dist/.DS_Store
+*.zip
+
+.DS_Store
+*.zip
+tsconfig.tsbuildinfo

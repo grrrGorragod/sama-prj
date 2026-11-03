@@ -126,7 +126,6 @@ export default function Activities({
       <div className="page-heading">
         <div>
           <span className="eyebrow">{review ? "Review Activities" : ""}</span>
-          <h1>{review ? "ตรวจกิจกรรม" : "รายการกิจกรรม"}</h1>
           <p>
             {review
               ? "ตรวจสอบและให้คำแนะนำกับทุกประสบการณ์ของนักเรียน"
@@ -208,7 +207,7 @@ export default function Activities({
             {(
               [
                 { id: "", label: "ทั้งหมด" },
-                { id: "DRAFT", label: "ยังไม่ส่ง" },
+                { id: "DRAFT", label: "แบบร่าง" },
                 { id: "PENDING", label: "ส่งแล้ว" },
                 { id: "APPROVED", label: "ตรวจแล้ว" },
                 { id: "REJECTED", label: "ไม่ผ่าน" },

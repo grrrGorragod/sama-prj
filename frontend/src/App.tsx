@@ -15,6 +15,8 @@ import {
   RefreshCw,
   CheckCircle2,
   LayoutGrid,
+  user-star
+
 } from "lucide-react";
 import { api, ApiError } from "./lib/api";
 import type { Me, Term, Category, Activity } from "./lib/types";
@@ -173,7 +175,7 @@ export default function App() {
           label: "รายการกิจกรรม",
           icon: ClipboardCheck,
         },
-        { id: "favorites" as Route, label: "ครูที่ปรึกษา", icon: Star },
+        { id: "favorites" as Route, label: "ครูที่ปรึกษา", icon: user-star },
       ]
     : [
         { id: "dashboard" as Route, label: "หน้าหลัก", icon: Home },
@@ -194,7 +196,7 @@ export default function App() {
     {
       id: (student ? "favorites" : "classrooms") as Route,
       label: student ? "ครูที่ปรึกษา" : "ห้องเรียน",
-      icon: student ? Star : Users,
+      icon: student ? user-star : Users,
     },
     { id: "profile" as Route, label: "บัญชี", icon: UserRound },
   ];
@@ -272,15 +274,8 @@ export default function App() {
             <strong>{titles[active]}</strong>
           </div>
           <div className="topbar-right">
-            <button
-              className="icon-button"
-              aria-label="รีเฟรชข้อมูล"
-              onClick={() => void client.invalidateQueries()}
-            >
-              <RefreshCw size={19} />
-            </button>
             <label className="term-select">
-              <span>ปี/เทอม</span>
+              <span>ปีการศึกษา</span>
               <select
                 aria-label="ปีและภาคเรียน"
                 value={selectedTerm}

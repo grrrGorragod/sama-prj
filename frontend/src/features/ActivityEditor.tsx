@@ -55,6 +55,8 @@ export default function ActivityEditor({
   const [endTime, setEnd] = useState(a?.endTime?.slice(0, 5) || "");
   const [reviewerId, setReviewer] = useState(a?.reviewerId || "");
   const [teacherSearch, setTeacherSearch] = useState("");
+  const [suggestOpen, setSuggestOpen] = useState(false);
+  const [picked, setPicked] = useState<Teacher | null>(null);
   const [conflict, setConflict] = useState(false);
   const [reloading, setReloading] = useState(false);
   const [reloadError, setReloadError] = useState<unknown>();
@@ -63,12 +65,19 @@ export default function ActivityEditor({
     if (directCategory && !titleTouched && category?.name)
       setTitle(category.name);
   }, [categoryId, categories, directCategory, titleTouched, category?.name]);
+  // every teacher: fills the drop-down below the search box
   const teachers = useQuery({
-    queryKey: ["teachers", teacherSearch],
+    queryKey: ["teachers", ""],
+    queryFn: () => api<Page<Teacher>>("/teachers?search="),
+  });
+  // teachers matching what is typed: shown as the pop-up under the search box
+  const matches = useQuery({
+    queryKey: ["teachers", teacherSearch.trim()],
     queryFn: () =>
       api<Page<Teacher>>(
-        "/teachers?search=" + encodeURIComponent(teacherSearch),
+        "/teachers?search=" + encodeURIComponent(teacherSearch.trim()),
       ),
+    enabled: !!teacherSearch.trim(),
   });
   const advisors = useQuery({
     queryKey: ["advisor"],
@@ -223,6 +232,13 @@ export default function ActivityEditor({
       .submitter as HTMLButtonElement;
     mutation.mutate(button?.value === "submit");
   }
+  function chooseTeacher(t: Teacher) {
+    setReviewer(t.id);
+    setPicked(t);
+    setTeacherSearch("");
+    setSuggestOpen(false);
+  }
+  const showSuggest = suggestOpen && !!teacherSearch.trim();
   const advisorIds = new Set(advisors.data?.map((t) => t.id));
   const options = [
     ...(advisors.data || []),
@@ -373,14 +389,68 @@ export default function ActivityEditor({
           {!directCategory && <div className="form-divider" />}
           <label>
             ค้นหาครูผู้ตรวจ
-            <input
-              value={teacherSearch}
-              onChange={(e) => setTeacherSearch(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") e.preventDefault();
-              }}
-              placeholder="ค้นหาชื่อครู…"
-            />
+            <span className="suggest-wrap">
+              <input
+                value={teacherSearch}
+                onChange={(e) => {
+                  setTeacherSearch(e.target.value);
+                  setSuggestOpen(true);
+                }}
+                onFocus={() => setSuggestOpen(true)}
+                onBlur={() => setSuggestOpen(false)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    const first = matches.data?.items[0];
+                    if (first) chooseTeacher(first);
+                  } else if (e.key === "Escape") setSuggestOpen(false);
+                }}
+                placeholder="ค้นหาชื่อครู…"
+                autoComplete="off"
+                role="combobox"
+                aria-expanded={showSuggest}
+                aria-controls="teacher-suggestions"
+              />
+              {showSuggest && (
+                <ul
+                  className="teacher-suggestions"
+                  id="teacher-suggestions"
+                  role="listbox"
+                >
+                  {matches.error ? (
+                    <li className="suggest-note">ค้นหาไม่สำเร็จ ลองใหม่อีกครั้ง</li>
+                  ) : matches.isPending ? (
+                    <li className="suggest-note">กำลังค้นหา…</li>
+                  ) : matches.data?.items.length ? (
+                    matches.data.items.map((t) => (
+                      <li
+                        key={t.id}
+                        role="option"
+                        aria-selected={t.id === reviewer}
+                      >
+                        <button
+                          type="button"
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            chooseTeacher(t);
+                          }}
+                        >
+                          <span>
+                            {t.fullName}
+                            {t.advisor && (
+                              <span className="advisor-badge">ประจำห้อง</span>
+                            )}
+                          </span>
+                          {t.department ? <small>{t.department}</small> : null}
+                        </button>
+                      </li>
+                    ))
+                  ) : (
+                    <li className="suggest-note">ไม่พบครูที่ค้นหา</li>
+                  )}
+                </ul>
+              )}
+            </span>
           </label>
           <label>
             ส่งกิจกรรมให้ครู <span className="required">*</span>
@@ -391,7 +461,9 @@ export default function ActivityEditor({
               <option value="">เลือกครูผู้ตรวจ</option>
               {reviewer && !options.some((t) => t.id === reviewer) && (
                 <option value={reviewer}>
-                  {a?.reviewerName || "ครูที่เลือกไว้"}
+                  {picked?.id === reviewer
+                    ? picked.fullName
+                    : a?.reviewerName || "ครูที่เลือกไว้"}
                 </option>
               )}
               {options.map((t) => (

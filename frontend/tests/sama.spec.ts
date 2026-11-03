@@ -174,7 +174,7 @@ test("mobile layout, navigation, draft and login validation", async ({
     .getByRole("button", { name: "รายการกิจกรรม", exact: true })
     .last()
     .click();
-  await page.getByRole("tab", { name: "ยังไม่ส่ง", exact: true }).click();
+  await page.getByLabel("กรองสถานะกิจกรรม").selectOption("DRAFT");
   await expect(
     page.locator(".table-title").filter({ hasText: "E2E แบบร่างบนมือถือ" }),
   ).toBeVisible();
@@ -280,7 +280,7 @@ test("reference screens render on mobile and desktop without page overflow", asy
     path: "test-results/reference-activity-list.png",
     fullPage: true,
   });
-  await page.getByRole("tab", { name: "ตรวจแล้ว", exact: true }).click();
+  await page.getByLabel("กรองสถานะกิจกรรม").selectOption("APPROVED");
   await page.locator(".activity-entry .table-title").first().click();
   await expect(page.locator(".timeline li")).toHaveCount(3);
   await page.getByRole("dialog").screenshot({

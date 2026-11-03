@@ -1024,43 +1024,6 @@ a:focus-visible {
   height: 2px;
   background: #ae4bff;
 }
-.student-status-tabs {
-  border: 0;
-  gap: 7px;
-  margin-bottom: 19px;
-}
-.student-status-tabs > button {
-  font-size: 12px;
-  border-radius: 5px;
-  padding: 7px 11px;
-  flex: 1;
-  color: #fff;
-  opacity: 0.48;
-  background: #8d8d92;
-}
-.student-status-tabs .draft {
-  background: #50b9f6;
-}
-.student-status-tabs .pending {
-  background: #ffb648;
-}
-.student-status-tabs .approved {
-  background: #77cf91;
-}
-.student-status-tabs .rejected {
-  background: #ff7985;
-}
-.student-status-tabs > button.active {
-  opacity: 1;
-  color: white;
-}
-.student-status-tabs > button.active:after {
-  display: none;
-}
-.student-status-tabs > button.active:before {
-  content: "✓";
-  margin-right: 4px;
-}
 .history-status-tabs {
   max-width: 310px;
   margin: 12px 0;
@@ -1099,29 +1062,6 @@ a:focus-visible {
   width: 220px;
   font-size: 12px;
   min-height: 43px;
-}
-.filter-row > .button {
-  font-size: 12px;
-  min-height: 43px;
-}
-.date-filters {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  padding: 14px;
-  background: #f0f0f5;
-  border-radius: 8px;
-  margin: 0 0 17px;
-}
-.date-filters > label {
-  flex: 1;
-  font-size: 12px;
-}
-.date-filters input {
-  font-size: 12px;
-}
-.date-filters > .text-link {
-  font-size: 12px;
 }
 .selection-heading {
   display: flex;
@@ -2678,13 +2618,6 @@ a:focus-visible {
     font-size: 12px;
     padding: 13px 10px;
   }
-  .student-status-tabs {
-    gap: 5px;
-  }
-  .student-status-tabs > button {
-    font-size: 11px;
-    padding: 7px 8px;
-  }
   .filter-row {
     padding: 13px 0 17px;
     gap: 9px;
@@ -2696,11 +2629,6 @@ a:focus-visible {
     font-size: 11px;
     min-height: 39px;
     padding: 9px;
-  }
-  .filter-row > .button {
-    min-height: 39px;
-    font-size: 11px;
-    padding: 9px 11px;
   }
   .search-input input {
     font-size: 12px;
@@ -2773,25 +2701,6 @@ a:focus-visible {
   }
   .pagination > div {
     gap: 6px;
-  }
-  .date-filters {
-    gap: 10px;
-    flex-wrap: wrap;
-    padding: 12px;
-  }
-  .date-filters label {
-    font-size: 11px;
-  }
-  .date-filters input {
-    font-size: 12px;
-    padding: 9px;
-  }
-  .date-filters > span {
-    display: none;
-  }
-  .date-filters .text-link {
-    font-size: 11px;
-    flex-basis: 100%;
   }
   .reference-profile-card {
     padding: 20px;
@@ -3335,10 +3244,6 @@ a:focus-visible {
   }
   .selection-heading small {
     font-size: 8px;
-  }
-  .student-status-tabs > button {
-    font-size: 10px;
-    padding: 7px 5px;
   }
   .bulk-bar > span {
     font-size: 10px;

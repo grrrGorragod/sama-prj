@@ -3,7 +3,6 @@ import { useQuery, useMutation } from "@tanstack/react-query";
 import {
   Search,
   Plus,
-  SlidersHorizontal,
   ChevronLeft,
   ChevronRight,
   Check,
@@ -32,9 +31,6 @@ export default function Activities({
   const [category, setCategory] = useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
-  const [filters, setFilters] = useState(false);
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
   const [selected, setSelected] = useState<Activity[]>([]);
   const [decision, setDecision] = useState<"APPROVE" | "REJECT" | null>(null);
   const [reason, setReason] = useState("");
@@ -48,8 +44,6 @@ export default function Activities({
       category,
       search,
       page,
-      from,
-      to,
     ],
     queryFn: () =>
       api<Page<Activity>>(
@@ -61,8 +55,6 @@ export default function Activities({
             search,
             page,
             size: 12,
-            fromDate: from,
-            toDate: to,
           }),
       ),
   });
@@ -198,39 +190,7 @@ export default function Activities({
               </div>
             )}
           </>
-        ) : (
-          <div
-            className="status-tabs student-status-tabs"
-            role="tablist"
-            aria-label="สถานะกิจกรรม"
-          >
-            {(
-              [
-                { id: "", label: "ทั้งหมด" },
-                { id: "DRAFT", label: "แบบร่าง" },
-                { id: "PENDING", label: "ส่งแล้ว" },
-                { id: "APPROVED", label: "ตรวจแล้ว" },
-                { id: "REJECTED", label: "ไม่ผ่าน" },
-              ] as const
-            ).map((s) => (
-              <button
-                key={s.id}
-                role="tab"
-                aria-selected={status === s.id}
-                className={
-                  (status === s.id ? "active " : "") +
-                  (s.id || "all").toLowerCase()
-                }
-                onClick={() => {
-                  setStatus(s.id);
-                  reset();
-                }}
-              >
-                {s.label}
-              </button>
-            ))}
-          </div>
-        )}
+        ) : null}
         <div className="filter-row">
           <div className="search-input">
             <Search size={18} />
@@ -246,6 +206,22 @@ export default function Activities({
               }}
             />
           </div>
+          {!review && (
+            <select
+              aria-label="กรองสถานะกิจกรรม"
+              value={status}
+              onChange={(e) => {
+                setStatus(e.target.value as Status | "");
+                reset();
+              }}
+            >
+              <option value="">ทั้งหมด</option>
+              <option value="DRAFT">แบบร่าง</option>
+              <option value="PENDING">ส่งแล้ว</option>
+              <option value="APPROVED">ตรวจแล้ว</option>
+              <option value="REJECTED">ไม่ผ่าน</option>
+            </select>
+          )}
           <select
             aria-label="กรองหมวดกิจกรรม"
             value={category}
@@ -261,51 +237,7 @@ export default function Activities({
               </option>
             ))}
           </select>
-          <button
-            className={"button subtle " + (filters ? "selected" : "")}
-            onClick={() => setFilters(!filters)}
-          >
-            <SlidersHorizontal size={17} />
-            ช่วงวันที่
-          </button>
         </div>
-        {filters && (
-          <div className="date-filters">
-            <label>
-              ตั้งแต่วันที่
-              <input
-                type="date"
-                value={from}
-                onChange={(e) => {
-                  setFrom(e.target.value);
-                  reset();
-                }}
-              />
-            </label>
-            <span>—</span>
-            <label>
-              ถึงวันที่
-              <input
-                type="date"
-                value={to}
-                onChange={(e) => {
-                  setTo(e.target.value);
-                  reset();
-                }}
-              />
-            </label>
-            <button
-              className="text-link"
-              onClick={() => {
-                setFrom("");
-                setTo("");
-                reset();
-              }}
-            >
-              ล้างวันที่
-            </button>
-          </div>
-        )}
         {review && status === "PENDING" && !!items.length && (
           <div className="selection-heading">
             <label className="check-label">

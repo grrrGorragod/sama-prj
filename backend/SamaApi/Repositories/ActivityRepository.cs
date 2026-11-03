@@ -4,7 +4,7 @@ using SamaApi.Domain;
 
 namespace SamaApi.Repositories;
 
-public record ActivityFilter(int? Year, ActivityStatus? Status, long? CategoryId, DateOnly? From, DateOnly? To, string Search);
+public record ActivityFilter(int? Year, ActivityStatus? Status, long? CategoryId, string Search);
 public record PageResult<T>(IReadOnlyList<T> Items, long Total, int Page, int TotalPages);
 public record ActivityRow(long StudentId, long CategoryId, ActivityStatus Status, int DurationMinutes);
 
@@ -29,8 +29,6 @@ public class ActivityRepository(SamaDbContext db)
         if (f.Year is { } y) q = q.Where(a => a.AcademicYear == y);
         if (f.Status is { } s) q = q.Where(a => a.Status == s);
         if (f.CategoryId is { } c) q = q.Where(a => a.CategoryId == c);
-        if (f.From is { } from) q = q.Where(a => a.ActivityDate >= from);
-        if (f.To is { } to) q = q.Where(a => a.ActivityDate <= to);
         if (!string.IsNullOrWhiteSpace(f.Search))
         {
             var like = "%" + f.Search.Trim().Replace("\\", "\\\\").Replace("%", "\\%").Replace("_", "\\_") + "%";

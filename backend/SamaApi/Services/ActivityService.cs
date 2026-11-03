@@ -68,16 +68,15 @@ public class ActivityService(CurrentUser current, ActivityRepository activities,
     }
 
     public async Task<PageResult<ActivityItem>> ListAsync(bool review, string? termId, ActivityStatus? status,
-        string? categoryId, DateOnly? from, DateOnly? to, string? search, int page, int size)
+        string? categoryId, string? search, int page, int size)
     {
         search ??= "";
         if (page < 0 || size < 1 || size > 50 || search.Length > 200) throw BusinessException.Invalid("เงื่อนไขการค้นหาไม่ถูกต้อง");
-        if (from > to) throw BusinessException.Invalid("วันที่เริ่มต้นต้องไม่เกินวันที่สิ้นสุด");
         var ownerId = review ? (await current.TeacherAsync()).Id : (await current.StudentAsync()).Id;
         int? year = string.IsNullOrWhiteSpace(termId) ? null : AcademicService.ParseYear(termId);
         long? category = string.IsNullOrWhiteSpace(categoryId) ? null : Ids.Parse(categoryId);
 
-        var result = await activities.SearchAsync(ownerId, review, new ActivityFilter(year, status, category, from, to, search), page, size);
+        var result = await activities.SearchAsync(ownerId, review, new ActivityFilter(year, status, category, search), page, size);
         return new PageResult<ActivityItem>(result.Items.Select(ActivityItem.From).ToList(), result.Total, result.Page, result.TotalPages);
     }
 

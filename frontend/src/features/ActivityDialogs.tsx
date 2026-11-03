@@ -157,7 +157,7 @@ export function ActivityDetail({
                     <div>
                       <strong>
                         {h.toStatus === "DRAFT"
-                          ? "สร้างแล้ว"
+                          ? "สร้างแบบร่าง"
                           : statusNames[h.toStatus]}
                       </strong>
                       <small>

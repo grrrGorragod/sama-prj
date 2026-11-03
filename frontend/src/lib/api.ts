@@ -72,7 +72,7 @@ export function date(value: string | null, withTime = false) {
 }
 export const statusNames = {
   DRAFT: "แบบร่าง",
-  PENDING: "รอการตรวจสอบ",
+  PENDING: "ส่งแล้ว",
   APPROVED: "อนุมัติแล้ว",
   REJECTED: "ส่งคืน",
 };

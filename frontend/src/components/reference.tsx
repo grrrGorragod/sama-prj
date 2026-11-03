@@ -73,7 +73,7 @@ export function ReferenceCategoryCard({
             "completion-chip " + (c.percent >= 100 ? "is-complete" : "")
           }
         >
-          {c.percent.toFixed(1)}% Completed
+          {c.percent.toFixed(1)}% สำเร็จแล้ว
         </span>
         <i />
         <i />

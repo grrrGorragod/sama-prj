@@ -3646,3 +3646,65 @@ input[readonly] {
 .activity-form input:not([type="checkbox"]):not([type="file"]) {
   min-height: 46px;
 }
+
+.reviewer-picker {
+  margin-bottom: 22px;
+}
+.reviewer-title {
+  margin: 0 0 7px;
+  font-size: 14px;
+  font-weight: 500;
+}
+.reviewer-picker .search-input input {
+  font-size: 14px;
+}
+.reviewer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  max-height: 280px;
+  overflow-y: auto;
+}
+.reviewer-option {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #e3e5ec;
+  border-radius: 8px;
+  background: #fff;
+  text-align: left;
+}
+.reviewer-option:hover {
+  border-color: #cdb6ea;
+}
+.reviewer-option.selected {
+  border-color: var(--purple);
+  background: #faf5fe;
+}
+.reviewer-option .person-avatar,
+.reviewer-option .reviewer-placeholder {
+  width: 36px;
+  height: 36px;
+  flex: none;
+}
+.reviewer-name {
+  flex: 1;
+  min-width: 0;
+}
+.reviewer-name strong {
+  font-size: 14px;
+  font-weight: 500;
+}
+.reviewer-name small {
+  display: block;
+  margin-top: 2px;
+  font-size: 11px;
+  color: #9398a5;
+}
+.reviewer-check {
+  color: var(--purple);
+  flex: none;
+}

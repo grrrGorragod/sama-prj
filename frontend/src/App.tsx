@@ -306,7 +306,7 @@ export default function App() {
               >
                 {terms.data?.map((t) => (
                   <option key={t.id} value={t.id}>
-                    {t.label}
+                    {t.label.match(/\d{4}/)?.[0] ?? t.label}
                   </option>
                 ))}
               </select>

@@ -34,6 +34,7 @@ export default function Classrooms({
   const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState<unknown>();
   const [category, setCategory] = useState("");
+  const [mode, setMode] = useState<"all" | "category">("all");
   async function download() {
     if (!room) return;
     setDownloading(true);
@@ -51,11 +52,14 @@ export default function Classrooms({
   if (rooms.error) return <ErrorBox error={rooms.error} />;
   const s = stats.data;
   const categories = s?.students[0]?.categories || [];
-  const selection = categories.find((c) => c.categoryId === category);
+  // "ภาพรวมทุกหมวด" = no category; "แยกรายหมวด" = the chosen one (the first until picked)
+  const categoryId =
+    mode === "category" ? category || categories[0]?.categoryId || "" : "";
+  const selection = categories.find((c) => c.categoryId === categoryId);
   const rows =
     s?.students.map((u) => {
-      if (!category) return u;
-      const c = u.categories.find((c) => c.categoryId === category);
+      if (!categoryId) return u;
+      const c = u.categories.find((c) => c.categoryId === categoryId);
       return {
         ...u,
         percent: c?.percent || 0,
@@ -95,21 +99,46 @@ export default function Classrooms({
             ))}
           </select>
         </label>
-        <label>
-          หมวดกิจกรรม
-          <select
-            aria-label="กรองสถิติตามหมวด"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
+        <div className="classroom-category-picker">
+          <span id="category-mode-label">หมวดกิจกรรม</span>
+          <div
+            className="segmented"
+            role="tablist"
+            aria-labelledby="category-mode-label"
           >
-            <option value="">กิจกรรมทั้งหมด</option>
-            {categories.map((c) => (
-              <option key={c.categoryId} value={c.categoryId}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </label>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === "all"}
+              className={mode === "all" ? "active" : ""}
+              onClick={() => setMode("all")}
+            >
+              ภาพรวมทุกหมวด
+            </button>
+            <button
+              type="button"
+              role="tab"
+              aria-selected={mode === "category"}
+              className={mode === "category" ? "active" : ""}
+              onClick={() => setMode("category")}
+            >
+              แยกรายหมวด
+            </button>
+          </div>
+          {mode === "category" && (
+            <select
+              aria-label="เลือกหมวดกิจกรรม"
+              value={categoryId}
+              onChange={(e) => setCategory(e.target.value)}
+            >
+              {categories.map((c) => (
+                <option key={c.categoryId} value={c.categoryId}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
       </div>
       {!!error && <ErrorBox error={error} />}{" "}
       {!room ? (

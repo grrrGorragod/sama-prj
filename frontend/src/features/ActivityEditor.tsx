@@ -315,8 +315,11 @@ export default function ActivityEditor({
                 </select>
               </label>
               <label className="term-field">
-                ปี / ภาคเรียน
-                <input value={a?.termLabel || term.label} readOnly />
+                ปีการศึกษา
+                <input
+                  value={(a?.termLabel || term.label).replace(/^ปีการศึกษา\s*/, "")}
+                  readOnly
+                />
               </label>
             </div>
           )}

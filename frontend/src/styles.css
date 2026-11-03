@@ -1777,14 +1777,43 @@ a:focus-visible {
 }
 .classroom-controls {
   display: flex;
-  gap: 15px;
-  align-items: end;
+  flex-direction: column;
+  gap: 18px;
+  align-items: stretch;
   margin: 17px 0 24px;
 }
 .classroom-controls label {
   font-size: 12px;
   color: #9d51c2;
-  flex: 1;
+}
+.classroom-category-picker {
+  font-size: 12px;
+  color: #9d51c2;
+}
+.classroom-category-picker select {
+  display: block;
+  margin-top: 12px;
+}
+.segmented {
+  display: inline-flex;
+  gap: 4px;
+  margin-top: 7px;
+  padding: 5px;
+  border-radius: 14px;
+  background: #efecf4;
+}
+.segmented button {
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: #5f5a6b;
+  background: transparent;
+}
+.segmented button.active {
+  background: #fff;
+  color: #5b2a9c;
+  font-weight: 600;
+  box-shadow: 0 1px 4px #00000018;
 }
 .classroom-controls select {
   font-size: 13px;

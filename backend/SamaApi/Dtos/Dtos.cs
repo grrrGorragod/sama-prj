@@ -6,13 +6,13 @@ namespace SamaApi.Dtos;
 // All ids are strings on the wire (the web client treats them as opaque).
 
 public record LoginRequest(string Email, string Password);
-public record ProfileRequest(string FullName, string Email, string? Phone, string? Address);
+public record ProfileRequest(string? FullName, string? Email, string? Phone, string? Address);
 
 public record Me(string Id, string Email, string FullName, string Role, string? StudentCode, string? Department,
     string? Phone, string? Address, bool EmailEditable)
 {
     public static Me From(User u) => new(Ids.Str(u.Id), u.Email, u.FullName, u.Role.ToString().ToUpperInvariant(),
-        (u as Student)?.StudentCode, (u as Teacher)?.Department, u.Profile?.Phone ?? "", u.Profile?.Address ?? "", true);
+        (u as Student)?.StudentCode, (u as Teacher)?.Department, u.Profile?.Phone ?? "", u.Profile?.Address ?? "", false);
 }
 
 public record TermDto(string Id, string Label, DateOnly StartsOn, DateOnly EndsOn, DateTime SubmissionDeadline);

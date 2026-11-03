@@ -3635,3 +3635,9 @@ a:focus-visible {
   font-weight: 600;
   vertical-align: middle;
 }
+
+input[readonly] {
+  background: #f1f1f5;
+  color: #6b6f7b;
+  cursor: not-allowed;
+}

@@ -21,9 +21,8 @@ public class AuthService(UserRepository users, CurrentUser current)
     public async Task<Me> UpdateProfileAsync(ProfileRequest r)
     {
         var user = await current.GetAsync();
-        var email = (r.Email ?? "").Trim().ToLowerInvariant();
-        if (await users.EmailTakenAsync(email, user.Id)) throw BusinessException.Invalid("อีเมลนี้ถูกใช้งานแล้ว");
-        user.UpdateProfile(r.FullName, email, r.Phone, r.Address);
+        // name and e-mail are managed by the school: only phone and address can be changed here
+        user.UpdateProfile(user.FullName, user.Email, r.Phone, r.Address);
         await users.SaveAsync();
         return Me.From(user);
     }

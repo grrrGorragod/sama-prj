@@ -21,8 +21,6 @@ export default function Profile({
   const client = useQueryClient();
   const [editing, setEditing] = useState(false);
   const [privacy, setPrivacy] = useState(false);
-  const [name, setName] = useState(me.fullName);
-  const [email, setEmail] = useState(me.email);
   const [phone, setPhone] = useState(me.phone || "");
   const [address, setAddress] = useState(me.address || "");
   const summary = useQuery({
@@ -34,7 +32,7 @@ export default function Profile({
     mutationFn: () =>
       api<Me>("/me", {
         method: "PATCH",
-        body: JSON.stringify({ fullName: name, email, phone, address }),
+        body: JSON.stringify({ phone, address }),
       }),
     onSuccess: (user) => {
       client.setQueryData(["me"], user);
@@ -107,26 +105,15 @@ export default function Profile({
             <fieldset disabled={mutation.isPending}>
               <label>
                 ชื่อ–นามสกุล
-                <input
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  required
-                  maxLength={200}
-                />
+                <input value={me.fullName} readOnly />
               </label>
               <label>
                 อีเมล
-                <input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  maxLength={254}
-                  readOnly={me.emailEditable === false}
-                />
-                {me.emailEditable === false && (
-                  <small>หากต้องการเปลี่ยนอีเมล กรุณาติดต่อผู้ดูแลบัญชี</small>
-                )}
+                <input type="email" value={me.email} readOnly />
+                <small>
+                  ชื่อ–นามสกุลและอีเมลแก้ไขเองไม่ได้
+                  หากต้องการเปลี่ยนกรุณาติดต่อผู้ดูแลบัญชี
+                </small>
               </label>
               <label>
                 เบอร์โทรศัพท์

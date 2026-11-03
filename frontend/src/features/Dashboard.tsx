@@ -3,7 +3,6 @@ import {
   CalendarDays,
   ChevronRight,
   NotebookPen,
-  Star,
   Plus,
   Users,
   ClipboardCheck,

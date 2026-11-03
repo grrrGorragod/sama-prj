@@ -101,6 +101,7 @@ export default function Classrooms({
         </label>
         <div className="classroom-category-picker">
           <span id="category-mode-label">หมวดกิจกรรม</span>
+          <br />
           <div
             className="segmented"
             role="tablist"

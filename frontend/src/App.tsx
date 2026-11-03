@@ -5,17 +5,14 @@ import {
   FileText,
   ClipboardCheck,
   Users,
-  Star,
   UserRound,
   LogOut,
   Plus,
   ChevronDown,
   Menu,
   X,
-  RefreshCw,
   CheckCircle2,
   LayoutGrid,
-  UserStar,
 } from "lucide-react";
 import { api, ApiError } from "./lib/api";
 import type { Me, Term, Category, Activity } from "./lib/types";
@@ -174,7 +171,7 @@ export default function App() {
           label: "รายการกิจกรรม",
           icon: ClipboardCheck,
         },
-        { id: "favorites" as Route, label: "ครูที่ปรึกษา", icon: UserStar },
+        { id: "favorites" as Route, label: "ครูที่ปรึกษา", icon: Users },
       ]
     : [
         { id: "dashboard" as Route, label: "หน้าหลัก", icon: Home },
@@ -195,7 +192,7 @@ export default function App() {
     {
       id: (student ? "favorites" : "classrooms") as Route,
       label: student ? "ครูที่ปรึกษา" : "ห้องเรียน",
-      icon: student ? UserStar : Users,
+      icon: student ? Users : Users,
     },
     { id: "profile" as Route, label: "บัญชี", icon: UserRound },
   ];

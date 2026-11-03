@@ -244,13 +244,13 @@ test("reference screens render on mobile and desktop without page overflow", asy
   await page.goto("/#categories");
   await expect(
     page.locator(".reference-category-grid .reference-category"),
-  ).toHaveCount(7);
+  ).toHaveCount(9);
   await page.screenshot({
     path: "test-results/reference-categories.png",
     fullPage: true,
   });
   await page
-    .getByRole("button", { name: "เพิ่มกิจกรรม การออกกำลังกาย", exact: true })
+    .getByRole("button", { name: "เพิ่มกิจกรรม แบบบันทึกการออกกำลังกาย เล่นกีฬา", exact: true })
     .click();
   await expect(page.getByRole("dialog")).toHaveClass(/page-modal/);
   const bounds = await page.getByRole("dialog").boundingBox();
@@ -338,9 +338,9 @@ test("reference screens render on mobile and desktop without page overflow", asy
     .click();
   await teacher
     .getByLabel("กรองสถิติตามหมวด")
-    .selectOption({ label: "การออกกำลังกาย" });
+    .selectOption({ label: "แบบบันทึกการออกกำลังกาย เล่นกีฬา" });
   await expect(teacher.locator(".classroom-category-note")).toContainText(
-    "การออกกำลังกาย",
+    "แบบบันทึกการออกกำลังกาย เล่นกีฬา",
   );
   expect(
     await teacher.evaluate(
@@ -358,7 +358,7 @@ test("editable activity names and evidence survive draft edits and teacher revie
   await login(page, "student");
   await page.goto("/#categories");
   await page
-    .getByRole("button", { name: "เพิ่มกิจกรรม การออกกำลังกาย", exact: true })
+    .getByRole("button", { name: "เพิ่มกิจกรรม แบบบันทึกการออกกำลังกาย เล่นกีฬา", exact: true })
     .click();
   let form = page.getByRole("dialog");
   const title = "หลักฐาน E2E " + Date.now();

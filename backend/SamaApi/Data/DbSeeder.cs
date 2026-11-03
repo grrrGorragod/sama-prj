@@ -4,23 +4,56 @@ using SamaApi.Domain;
 namespace SamaApi.Data;
 
 /// <summary>
-/// Makes sure the reference data exists: 7 activity categories (with code/colour the UI uses), this year's
+/// Makes sure the reference data exists: 9 activity categories (with code/colour the UI uses), this year's
 /// requirements and deadline, and the classrooms 1/1 … 6/10. Only fills what is missing; never deletes.
 /// </summary>
 public static class DbSeeder
 {
-    private record CategorySpec(string Code, string Name, string Description, string Color, int Target, string[] OldNames);
+    public record CategorySpec(string Code, string Name, string Description, string Color, int Target);
 
-    private static readonly CategorySpec[] Specs =
+    // Target = how many approved activities are required this year (edit here, or in table Activites_Requirement).
+    public static readonly CategorySpec[] Specs =
     {
-        new("01_ADVISOR", "การพบพ่อครู/แม่ครู", "พูดคุย วางแผน และเติบโตไปด้วยกัน", "purple", 90, new[] { "การพบพ่อครู/แม่ครู" }),
-        new("02_READING", "การอ่านหนังสือ", "เปิดโลกความรู้ผ่านหนังสือเล่มใหม่", "blue", 5, new[] { "การอ่านหนังสือ" }),
-        new("03_CAMP", "การเข้าค่ายวิชาการ", "เรียนรู้นอกห้องเรียน ค้นหาสิ่งที่ชอบ", "orange", 1, new[] { "การเข้าค่ายวิชาการ" }),
-        new("04_EXERCISE", "การออกกำลังกาย", "ดูแลร่างกาย เติมพลังให้ทุกวัน", "pink", 40, new[] { "การออกกำลังกาย" }),
-        new("05_CLUB", "การเข้าร่วมกิจกรรมชุมนุม", "ลงมือทำสิ่งที่ชอบกับเพื่อน ๆ", "green", 1, new[] { "การเข้าร่วมกิจกรรมชุมนุม" }),
-        new("06_VOLUNTEER", "การบำเพ็ญประโยชน์ต่อโรงเรียน", "เริ่มต้นสิ่งดี ๆ ในโรงเรียนของเรา", "yellow", 10, new[] { "การบำเพ็ญประโยชน์" }),
-        new("07_COMMUNITY", "การบำเพ็ญประโยชน์ต่อชุมชน", "แบ่งปันเวลา สร้างคุณค่าให้สังคม", "teal", 3, new[] { "กิจกรรมอื่น ๆ" }),
+        new("01_FIELD_TRIP", "แบบบันทึกการศึกษาดูงานนอกสถานที่", "เรียนรู้จากสถานที่จริงนอกโรงเรียน", "purple", 1),
+        new("02_MEETING", "แบบบันทึกการพบปะ สนทนา ฯลฯ", "พูดคุย แลกเปลี่ยนความคิดเห็นและเรียนรู้ร่วมกัน", "blue", 1),
+        new("03_LECTURE", "แบบบันทึกการฟังบรรยาย/กิจกรรมอื่น ๆ", "ฟังบรรยายและร่วมกิจกรรมเพื่อเปิดโลกทัศน์", "orange", 1),
+        new("04_ACADEMIC_CAMP", "แบบบันทึกกิจกรรมค่ายวิชาการ", "เรียนรู้นอกห้องเรียน ค้นหาสิ่งที่ชอบ", "pink", 1),
+        new("05_DHARMA_CAMP", "แบบบันทึกกิจกรรมค่ายปฏิบัติธรรม", "ฝึกจิต สงบใจ ปฏิบัติธรรม", "green", 1),
+        new("06_SCHOOL_SERVICE", "แบบบันทึกกิจกรรมสาธารณประโยชน์ให้กับโรงเรียน", "เริ่มต้นสิ่งดี ๆ ในโรงเรียนของเรา", "yellow", 1),
+        new("07_EXERCISE", "แบบบันทึกการออกกำลังกาย เล่นกีฬา", "ดูแลร่างกาย เติมพลังให้ทุกวัน", "teal", 1),
+        new("08_INTERNSHIP", "แบบบันทึกการศึกษาดูงาน/ฝึกงาน", "เรียนรู้การทำงานจริงจากหน่วยงานภายนอก", "red", 1),
+        new("09_ADVISOR", "แบบบันทึกการพบและปฏิบัติกิจกรรมและรวมกับครูที่ปรึกษาประจำชั้น", "ทำกิจกรรมร่วมกับครูที่ปรึกษาประจำชั้น", "indigo", 1),
     };
+
+    /// <summary>
+    /// One-off clean-up (dotnet run -- reset-categories): deletes every category that is not in <see cref="Specs"/>
+    /// together with its requirements, activities, history and attachment rows (+ the evidence files), then seeds the new ones.
+    /// </summary>
+    public static async Task<int> ResetCategoriesAsync(SamaDbContext db, SamaApi.Services.IEvidenceStorage storage)
+    {
+        var keep = Specs.Select(s => s.Code).ToHashSet();
+        var old = await db.ActivityCategories.Where(c => c.Code == null || !keep.Contains(c.Code)).ToListAsync();
+        var ids = old.Select(c => c.Id).ToList();
+        if (ids.Count > 0)
+        {
+            await using var tx = await db.Database.BeginTransactionAsync();
+            var activityIds = await db.Activities.Where(a => ids.Contains(a.CategoryId)).Select(a => a.Id).ToListAsync();
+            var files = await db.ActivityAttachments.Where(f => activityIds.Contains(f.ActivityId)).Select(f => f.StoragePath).ToListAsync();
+            await db.ActivityAttachments.Where(f => activityIds.Contains(f.ActivityId)).ExecuteDeleteAsync();
+            await db.Set<ActivityStatusLog>().Where(h => activityIds.Contains(h.ActivityId)).ExecuteDeleteAsync();
+            await db.Activities.Where(a => ids.Contains(a.CategoryId)).ExecuteDeleteAsync();
+            await db.ActivityRequirements.Where(r => ids.Contains(r.CategoryId)).ExecuteDeleteAsync();
+            await db.ActivityCategories.Where(c => ids.Contains(c.Id)).ExecuteDeleteAsync();
+            await tx.CommitAsync();
+            foreach (var path in files)
+                try { await storage.DeleteAsync(path); } catch { /* file already gone */ }
+            Console.WriteLine($"ลบหมวดเก่า {ids.Count} หมวด และกิจกรรม {activityIds.Count} รายการที่เกี่ยวข้อง");
+        }
+        else Console.WriteLine("ไม่มีหมวดเก่าให้ลบ");
+        db.ChangeTracker.Clear();
+        await SeedAsync(db);
+        return 0;
+    }
 
     public static async Task SeedAsync(SamaDbContext db)
     {
@@ -31,7 +64,7 @@ public static class DbSeeder
         foreach (var spec in Specs)
         {
             var match = categories.FirstOrDefault(c => c.Code == spec.Code)
-                        ?? categories.FirstOrDefault(c => string.IsNullOrEmpty(c.Code) && (c.Name == spec.Name || spec.OldNames.Contains(c.Name)));
+                        ?? categories.FirstOrDefault(c => string.IsNullOrEmpty(c.Code) && c.Name == spec.Name);
             if (match is null)
             {
                 match = ActivityCategory.Create(spec.Code, spec.Name, spec.Description, spec.Color);

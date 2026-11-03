@@ -708,6 +708,12 @@ a:focus-visible {
 .reference-category.teal .reference-category-art {
   background: linear-gradient(155deg, #6ce1d0, #56a3fb);
 }
+.reference-category.red .reference-category-art {
+  background: linear-gradient(155deg, #ff8a8a, #d6336c);
+}
+.reference-category.indigo .reference-category-art {
+  background: linear-gradient(155deg, #7c8cff, #3b3fb5);
+}
 .reference-categories-page > .page-heading {
   margin-bottom: 24px;
 }
@@ -1457,6 +1463,14 @@ a:focus-visible {
 .category-icon.teal {
   color: #32a9b3;
   background: #e3f8f5;
+}
+.category-icon.red {
+  color: #d6336c;
+  background: #fde4ec;
+}
+.category-icon.indigo {
+  color: #4c51bf;
+  background: #e5e7fb;
 }
 .detail-grid {
   display: grid;

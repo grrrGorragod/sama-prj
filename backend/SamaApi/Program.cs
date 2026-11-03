@@ -142,6 +142,14 @@ if (args.Length > 0 && args[0] == "seed-demo")
     return await scope.ServiceProvider.GetRequiredService<DemoActivitySeeder>().RunAsync();
 }
 
+// ---- command line: dotnet run -- reset-categories   (delete the old categories + their activities, add the 9 new ones) ----
+if (args.Length > 0 && args[0] == "reset-categories")
+{
+    using var scope = app.Services.CreateScope();
+    return await DbSeeder.ResetCategoriesAsync(scope.ServiceProvider.GetRequiredService<SamaDbContext>(),
+        scope.ServiceProvider.GetRequiredService<IEvidenceStorage>());
+}
+
 if (config.GetValue<bool>("Seed:Enabled"))
 {
     using var scope = app.Services.CreateScope();

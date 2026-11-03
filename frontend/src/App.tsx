@@ -15,8 +15,7 @@ import {
   RefreshCw,
   CheckCircle2,
   LayoutGrid,
-  user-star,
-
+  UserStar,
 } from "lucide-react";
 import { api, ApiError } from "./lib/api";
 import type { Me, Term, Category, Activity } from "./lib/types";
@@ -175,7 +174,7 @@ export default function App() {
           label: "รายการกิจกรรม",
           icon: ClipboardCheck,
         },
-        { id: "favorites" as Route, label: "ครูที่ปรึกษา", icon: user-star },
+        { id: "favorites" as Route, label: "ครูที่ปรึกษา", icon: UserStar },
       ]
     : [
         { id: "dashboard" as Route, label: "หน้าหลัก", icon: Home },
@@ -196,7 +195,7 @@ export default function App() {
     {
       id: (student ? "favorites" : "classrooms") as Route,
       label: student ? "ครูที่ปรึกษา" : "ห้องเรียน",
-      icon: student ? user-star : Users,
+      icon: student ? UserStar : Users,
     },
     { id: "profile" as Route, label: "บัญชี", icon: UserRound },
   ];

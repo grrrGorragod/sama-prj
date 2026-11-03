@@ -3604,3 +3604,53 @@ input[readonly] {
   color: #9398a5;
   font-size: 13px;
 }
+
+.progress-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: #e9eaf0;
+  overflow: hidden;
+}
+.progress-bar > i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #c179f6, #af48ed);
+  transition: width 0.4s ease;
+}
+.progress-bar.is-complete > i {
+  background: linear-gradient(90deg, #4fdc8f, #15c56b);
+}
+.progress-bar.thin {
+  height: 6px;
+  margin: 2px 0 10px;
+}
+.reference-overall {
+  margin: 19px 0 25px;
+  padding: 19px 23px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 12px #00000008;
+}
+.overall-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+.overall-head h2 {
+  font-size: 17px;
+}
+.overall-head strong {
+  font-size: 27px;
+  font-weight: 700;
+  color: var(--purple);
+}
+.reference-overall.is-complete .overall-head strong {
+  color: var(--green);
+}
+.reference-overall p {
+  margin-top: 10px;
+  color: #8a919f;
+  font-size: 13px;
+}

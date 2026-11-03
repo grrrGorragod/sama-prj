@@ -24,6 +24,7 @@ import {
   Empty,
 } from "../components/ui";
 import {
+  ProgressBar,
   ReferenceCategoryCard,
   SchoolHeading,
   WelcomeCard,
@@ -125,6 +126,23 @@ function StudentDashboard({ me, term, navigate, onCreate }: Props) {
       </section>
       {!s.configured && (
         <div className="notice">ยังไม่ได้ตั้งค่าเกณฑ์ของเทอมนี้</div>
+      )}
+      {s.configured && (
+        <section
+          className={
+            "reference-overall" + (s.percent >= 100 ? " is-complete" : "")
+          }
+        >
+          <div className="overall-head">
+            <h2>ความคืบหน้ารวม</h2>
+            <strong>{Number(s.percent.toFixed(1))}%</strong>
+          </div>
+          <ProgressBar value={s.percent} label="ความคืบหน้ารวม" />
+          <p>
+            อนุมัติแล้ว {s.approved} · ส่งแล้ว {s.pending} · สร้างแล้ว {s.draft}{" "}
+            รายการ
+          </p>
+        </section>
       )}
       <SectionTitle title="สถิติการทำกิจกรรม">
         <button className="text-link" onClick={() => navigate("categories")}>

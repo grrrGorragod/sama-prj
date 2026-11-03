@@ -72,9 +72,9 @@ export function date(value: string | null, withTime = false) {
 }
 export const statusNames = {
   DRAFT: "แบบร่าง",
-  PENDING: "ส่งแล้ว",
+  PENDING: "รอการตรวจสอบ",
   APPROVED: "อนุมัติแล้ว",
-  REJECTED: "ไม่ผ่าน",
+  REJECTED: "ไม่อนุมัติ",
 };
 export async function downloadCsv(roomId: string, termId: string) {
   const r = await fetch(

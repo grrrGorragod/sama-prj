@@ -22,7 +22,6 @@ import {
   ErrorBox,
   SectionTitle,
   Empty,
-  Badge,
 } from "../components/ui";
 import {
   ReferenceCategoryCard,
@@ -73,11 +72,6 @@ function StudentDashboard({ me, term, navigate, onCreate, onView }: Props) {
   const progress = useQuery({
     queryKey: ["progress", term.id],
     queryFn: () => api<Summary>("/me/progress?termId=" + term.id),
-  });
-  const recent = useQuery({
-    queryKey: ["recent", term.id],
-    queryFn: () =>
-      api<Page<Activity>>("/activities?termId=" + term.id + "&size=4"),
   });
   if (progress.isPending) return <Loading />;
   if (progress.error)
@@ -145,39 +139,7 @@ function StudentDashboard({ me, term, navigate, onCreate, onView }: Props) {
           />
         ))}
       </div>
-      <section className="reference-recent">
-        <SectionTitle title="กิจกรรมล่าสุด">
-          <button className="text-link" onClick={() => navigate("activities")}>
-            เพิ่มเติม
-          </button>
-        </SectionTitle>
-        {recent.isPending ? (
-          <Loading />
-        ) : recent.error ? (
-          <ErrorBox error={recent.error} />
-        ) : recent.data?.items.length ? (
-          <div className="home-activity-list">
-            {recent.data.items.map((a) => (
-              <button
-                className={"home-activity-row " + a.status.toLowerCase()}
-                key={a.id}
-                onClick={() => onView(a.id)}
-              >
-                <div>
-                  <strong>{a.title || a.categoryName}</strong>
-                  <small>
-                    {a.categoryName} · {date(a.activityDate)}
-                  </small>
-                </div>
-                <Badge status={a.status} />
-                <ChevronRight size={18} />
-              </button>
-            ))}
-          </div>
-        ) : (
-          <Empty />
-        )}
-      </section>
+
     </div>
   );
 }

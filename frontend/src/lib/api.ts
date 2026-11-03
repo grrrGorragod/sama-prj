@@ -74,7 +74,7 @@ export const statusNames = {
   DRAFT: "แบบร่าง",
   PENDING: "ส่งแล้ว",
   APPROVED: "อนุมัติแล้ว",
-  REJECTED: "ส่งคืน",
+  REJECTED: "ไม่ผ่าน",
 };
 export async function downloadCsv(roomId: string, termId: string) {
   const r = await fetch(

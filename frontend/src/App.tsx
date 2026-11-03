@@ -25,6 +25,29 @@ import Classrooms from "./features/Classrooms";
 import Favorites from "./features/Favorites";
 import Profile from "./features/Profile";
 import { ActivityEditor, ActivityDetail } from "./features/ActivityDialogs";
+
+
+function UserStarIcon({ size = 24 }: { size?: number }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="lucide lucide-user-star"
+    >
+      <path d="M16.051 12.616a1 1 0 0 1 1.909.024l.737 1.452a1 1 0 0 0 .737.535l1.634.256a1 1 0 0 1 .588 1.806l-1.172 1.168a1 1 0 0 0-.282.866l.259 1.613a1 1 0 0 1-1.541 1.134l-1.465-.75a1 1 0 0 0-.912 0l-1.465.75a1 1 0 0 1-1.539-1.133l.258-1.613a1 1 0 0 0-.282-.866l-1.156-1.153a1 1 0 0 1 .572-1.822l1.633-.256a1 1 0 0 0 .737-.535z" />
+      <path d="M8 15H7a4 4 0 0 0-4 4v2" />
+      <circle cx="10" cy="7" r="4" />
+    </svg>
+  );
+}
+
 type Route =
   | "dashboard"
   | "categories"
@@ -171,7 +194,7 @@ export default function App() {
           label: "รายการกิจกรรม",
           icon: ClipboardCheck,
         },
-        { id: "favorites" as Route, label: "ครูที่ปรึกษา", icon: Users },
+        { id: "favorites" as Route, label: "ครูที่ปรึกษา", icon: UserStarIcon },
       ]
     : [
         { id: "dashboard" as Route, label: "หน้าหลัก", icon: Home },
@@ -192,7 +215,7 @@ export default function App() {
     {
       id: (student ? "favorites" : "classrooms") as Route,
       label: student ? "ครูที่ปรึกษา" : "ห้องเรียน",
-      icon: student ? Users : Users,
+      icon: student ? UserStarIcon : Users,
     },
     { id: "profile" as Route, label: "บัญชี", icon: UserRound },
   ];

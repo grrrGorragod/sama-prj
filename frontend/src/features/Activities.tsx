@@ -267,22 +267,6 @@ export default function Activities({
                 ? "ไม่พบกิจกรรมในเงื่อนไขนี้"
                 : "ยังไม่มีกิจกรรม"
             }
-            text={
-              review
-                ? "เมื่อมีงานที่ตรงเงื่อนไข รายการจะแสดงที่นี่"
-                : search || category || status
-                  ? "ลองเปลี่ยนตัวกรองหรือคำค้นหา"
-                  : "เริ่มบันทึกกิจกรรมใหม่"
-            }
-            action={
-              !review &&
-              !(search || category || status) && (
-                <button className="button secondary" onClick={onCreate}>
-                  <Plus size={17} />
-                  เพิ่มกิจกรรม
-                </button>
-              )
-            }
           />
         ) : (
           <>

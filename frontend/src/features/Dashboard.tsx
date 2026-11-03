@@ -236,7 +236,6 @@ function TeacherDashboard({ me, term, navigate, onView }: Props) {
 export function Categories({
   term,
   onCreate,
-  onList,
 }: {
   term: Term;
   onCreate: (categoryId?: string) => void;
@@ -253,10 +252,6 @@ export function Categories({
           <h1>กิจกรรม</h1>
           <p>Activities</p>
         </div>
-        <button className="button secondary" onClick={onList}>
-          <NotebookPen size={17} />
-          รายการกิจกรรม
-        </button>
       </div>
       <h2 className="category-section-title">กิจกรรมพัฒนาผู้เรียน</h2>
       {progress.isPending ? (

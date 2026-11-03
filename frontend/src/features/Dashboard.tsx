@@ -22,6 +22,7 @@ import {
   ErrorBox,
   SectionTitle,
   Empty,
+  Badge,
 } from "../components/ui";
 import {
   ReferenceCategoryCard,
@@ -72,6 +73,11 @@ function StudentDashboard({ me, term, navigate, onCreate, onView }: Props) {
   const progress = useQuery({
     queryKey: ["progress", term.id],
     queryFn: () => api<Summary>("/me/progress?termId=" + term.id),
+  });
+  const recent = useQuery({
+    queryKey: ["recent", term.id],
+    queryFn: () =>
+      api<Page<Activity>>("/activities?termId=" + term.id + "&size=4"),
   });
   if (progress.isPending) return <Loading />;
   if (progress.error)
@@ -139,7 +145,39 @@ function StudentDashboard({ me, term, navigate, onCreate, onView }: Props) {
           />
         ))}
       </div>
-
+      <section className="reference-recent">
+        <SectionTitle title="กิจกรรมล่าสุด">
+          <button className="text-link" onClick={() => navigate("activities")}>
+            เพิ่มเติม
+          </button>
+        </SectionTitle>
+        {recent.isPending ? (
+          <Loading />
+        ) : recent.error ? (
+          <ErrorBox error={recent.error} />
+        ) : recent.data?.items.length ? (
+          <div className="home-activity-list">
+            {recent.data.items.map((a) => (
+              <button
+                className={"home-activity-row " + a.status.toLowerCase()}
+                key={a.id}
+                onClick={() => onView(a.id)}
+              >
+                <div>
+                  <strong>{a.title || a.categoryName}</strong>
+                  <small>
+                    {a.categoryName} · {date(a.activityDate)}
+                  </small>
+                </div>
+                <Badge status={a.status} />
+                <ChevronRight size={18} />
+              </button>
+            ))}
+          </div>
+        ) : (
+          <Empty />
+        )}
+      </section>
     </div>
   );
 }
@@ -236,6 +274,7 @@ function TeacherDashboard({ me, term, navigate, onView }: Props) {
 export function Categories({
   term,
   onCreate,
+  onList,
 }: {
   term: Term;
   onCreate: (categoryId?: string) => void;
@@ -252,6 +291,10 @@ export function Categories({
           <h1>กิจกรรม</h1>
           <p>Activities</p>
         </div>
+        <button className="button secondary" onClick={onList}>
+          <NotebookPen size={17} />
+          รายการกิจกรรม
+        </button>
       </div>
       <h2 className="category-section-title">กิจกรรมพัฒนาผู้เรียน</h2>
       {progress.isPending ? (

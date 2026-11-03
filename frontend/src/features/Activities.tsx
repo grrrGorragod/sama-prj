@@ -217,9 +217,9 @@ export default function Activities({
             >
               <option value="">ทั้งหมด</option>
               <option value="DRAFT">แบบร่าง</option>
-              <option value="PENDING">ส่งแล้ว</option>
-              <option value="APPROVED">ตรวจแล้ว</option>
-              <option value="REJECTED">ไม่ผ่าน</option>
+              <option value="PENDING">รอการตรวจสอบ</option>
+              <option value="APPROVED">อนุมัติแล้ว</option>
+              <option value="REJECTED">ไม่อนุมัติ</option>
             </select>
           )}
           <select

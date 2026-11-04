@@ -654,11 +654,11 @@ a:focus-visible {
   left: 11px;
   top: 11px;
   font-family: "Segoe UI", sans-serif;
-  font-size: 11px;
+  font-size: 15px;
   color: #fff;
   background: #ff4c54;
-  border-radius: 18px;
-  padding: 4px 9px;
+  border-radius: 20px;
+  padding: 5px 12px;
   font-weight: 600;
   white-space: nowrap;
 }
@@ -1777,43 +1777,14 @@ a:focus-visible {
 }
 .classroom-controls {
   display: flex;
-  flex-direction: column;
-  gap: 18px;
-  align-items: stretch;
+  gap: 15px;
+  align-items: end;
   margin: 17px 0 24px;
 }
 .classroom-controls label {
   font-size: 12px;
   color: #9d51c2;
-}
-.classroom-category-picker {
-  font-size: 12px;
-  color: #9d51c2;
-}
-.classroom-category-picker select {
-  display: block;
-  margin-top: 12px;
-}
-.segmented {
-  display: inline-flex;
-  gap: 4px;
-  margin-top: 7px;
-  padding: 5px;
-  border-radius: 14px;
-  background: #efecf4;
-}
-.segmented button {
-  padding: 10px 18px;
-  border-radius: 10px;
-  font-size: 13px;
-  color: #5f5a6b;
-  background: transparent;
-}
-.segmented button.active {
-  background: #fff;
-  color: #5b2a9c;
-  font-weight: 600;
-  box-shadow: 0 1px 4px #00000018;
+  flex: 1;
 }
 .classroom-controls select {
   font-size: 13px;
@@ -2239,8 +2210,8 @@ a:focus-visible {
     font-size: 12px;
   }
   .completion-chip {
-    font-size: 10px;
-    padding: 3px 8px;
+    font-size: 13px;
+    padding: 4px 10px;
   }
   .reference-deadline h2 {
     font-size: 16px;
@@ -2503,8 +2474,8 @@ a:focus-visible {
   .completion-chip {
     left: 8px;
     top: 9px;
-    font-size: 9px;
-    padding: 3px 8px;
+    font-size: 12px;
+    padding: 3px 9px;
   }
   .reference-category-art > i {
     width: 78px;
@@ -3631,55 +3602,5 @@ input[readonly] {
 .suggest-note {
   padding: 12px;
   color: #9398a5;
-  font-size: 13px;
-}
-
-.progress-bar {
-  height: 10px;
-  border-radius: 999px;
-  background: #e9eaf0;
-  overflow: hidden;
-}
-.progress-bar > i {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, #c179f6, #af48ed);
-  transition: width 0.4s ease;
-}
-.progress-bar.is-complete > i {
-  background: linear-gradient(90deg, #4fdc8f, #15c56b);
-}
-.progress-bar.thin {
-  height: 6px;
-  margin: 2px 0 10px;
-}
-.reference-overall {
-  margin: 19px 0 25px;
-  padding: 19px 23px;
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 4px 12px #00000008;
-}
-.overall-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-.overall-head h2 {
-  font-size: 17px;
-}
-.overall-head strong {
-  font-size: 27px;
-  font-weight: 700;
-  color: var(--purple);
-}
-.reference-overall.is-complete .overall-head strong {
-  color: var(--green);
-}
-.reference-overall p {
-  margin-top: 10px;
-  color: #8a919f;
   font-size: 13px;
 }

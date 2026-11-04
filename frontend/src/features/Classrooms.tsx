@@ -55,7 +55,6 @@ export default function Classrooms({
   // "ภาพรวมทุกหมวด" = no category; "แยกรายหมวด" = the chosen one (the first until picked)
   const categoryId =
     mode === "category" ? category || categories[0]?.categoryId || "" : "";
-  const selection = categories.find((c) => c.categoryId === categoryId);
   const rows =
     s?.students.map((u) => {
       if (!categoryId) return u;
@@ -179,11 +178,6 @@ export default function Classrooms({
                 </div>
               </div>
             </section>
-            <p className="classroom-category-note">
-              {selection
-                ? `หมวด ${selection.name} · เสร็จแล้ว = ทำครบเกณฑ์ของหมวดนี้`
-                : `ทุกหมวด (${categories.length} หมวด) · เสร็จแล้ว = ทำครบเกณฑ์ทุกหมวด ไม่ครบ = ยังขาดอย่างน้อย 1 หมวด`}
-            </p>
             <button
               className="button purple-button classroom-export"
               aria-label="ดาวน์โหลด CSV"

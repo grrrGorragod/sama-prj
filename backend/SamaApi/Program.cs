@@ -75,7 +75,7 @@ builder.Services.AddRateLimiter(o =>
         await ctx.HttpContext.Response.WriteAsJsonAsync(new { message = "ลองเข้าสู่ระบบบ่อยเกินไป กรุณารอสักครู่แล้วลองใหม่" }, ct);
     o.AddPolicy("login", http => RateLimitPartition.GetFixedWindowLimiter(
         http.Connection.RemoteIpAddress?.ToString() ?? "unknown",
-        _ => new FixedWindowRateLimiterOptions { PermitLimit = 10, Window = TimeSpan.FromMinutes(1) }));
+        _ => new FixedWindowRateLimiterOptions { PermitLimit = config.GetValue<int?>("RateLimit:LoginPerMinute") ?? 10, Window = TimeSpan.FromMinutes(1) }));
 });
 
 // ---- dependency injection: Controller → Service → Repository → DbContext ----

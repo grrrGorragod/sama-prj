@@ -285,7 +285,7 @@ export default function Activities({
                     (selected.some((s) => s.id === a.id) ? " selected" : "")
                   }
                 >
-                  {review && (
+                  {review && status === "PENDING" && (
                     <input
                       type="checkbox"
                       aria-label={"เลือก " + a.title + " ของ " + a.studentName}

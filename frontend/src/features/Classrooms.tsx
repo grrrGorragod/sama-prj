@@ -178,6 +178,7 @@ export default function Classrooms({
                 </div>
               </div>
             </section>
+            <br />
             <button
               className="button purple-button classroom-export"
               aria-label="ดาวน์โหลด CSV"

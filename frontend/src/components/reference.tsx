@@ -52,32 +52,6 @@ export function WelcomeCard({ me, subtitle }: { me: Me; subtitle: string }) {
     </section>
   );
 }
-export function ProgressBar({
-  value,
-  label,
-  className = "",
-}: {
-  value: number;
-  label?: string;
-  className?: string;
-}) {
-  const pct = Math.max(0, Math.min(100, value));
-  return (
-    <div
-      className={
-        "progress-bar " + (pct >= 100 ? "is-complete " : "") + className
-      }
-      role={label ? "progressbar" : undefined}
-      aria-label={label}
-      aria-hidden={label ? undefined : true}
-      aria-valuemin={label ? 0 : undefined}
-      aria-valuemax={label ? 100 : undefined}
-      aria-valuenow={label ? Math.round(pct) : undefined}
-    >
-      <i style={{ width: pct + "%" }} />
-    </div>
-  );
-}
 export function ReferenceCategoryCard({
   category: c,
   onClick,
@@ -101,12 +75,20 @@ export function ReferenceCategoryCard({
         >
           {c.percent.toFixed(1)}% สำเร็จแล้ว
         </span>
+        <img
+          src={"/activity-bg/" + c.code.toLowerCase() + ".webp"}
+          alt=""
+          loading="lazy"
+          decoding="async"
+          onError={(e) => {
+            e.currentTarget.style.display = "none";
+          }}
+        />
         <i />
         <i />
       </div>
       <div className="reference-category-body">
         <h3>{c.name}</h3>
-        <ProgressBar value={c.percent} className="thin" />
         <p className={c.remaining === 0 ? "done" : ""}>
           {c.remaining === 0 ? (
             "ครบแล้ว"

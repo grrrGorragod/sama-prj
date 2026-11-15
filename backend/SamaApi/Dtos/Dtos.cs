@@ -49,6 +49,7 @@ public record AttachmentInfo(string Id, string ClientUploadId, string OriginalNa
 public record UploadResult(AttachmentInfo Attachment, long ActivityVersion);
 public record VersionResult(long ActivityVersion);
 public record RemoveAttachmentRequest(long? ExpectedVersion);
+public record DeleteActivityRequest(long? ExpectedVersion);
 
 public record BulkSelection(string ActivityId, long? ExpectedVersion);
 public record BulkReviewRequest(List<BulkSelection> Items, ReviewDecision Decision, string? Reason);

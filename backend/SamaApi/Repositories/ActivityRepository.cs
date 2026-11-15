@@ -53,6 +53,7 @@ public class ActivityRepository(SamaDbContext db)
     }
 
     public async Task AddAsync(Activity a) => await db.Activities.AddAsync(a);
+    public void Remove(Activity a) => db.Activities.Remove(a);
     public Task SaveAsync() => db.SaveChangesAsync();
 
     // ----- attachments -----

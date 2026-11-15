@@ -154,6 +154,13 @@ public class Activity
         if (Status is not (Draft or Rejected)) throw BusinessException.Conflict("แก้ไขได้เฉพาะแบบร่างหรือกิจกรรมที่ส่งคืน");
     }
 
+    /// <summary>Only the owner can delete, and only while it is still a draft (never sent to a teacher).</summary>
+    public void RequireDeletable(long actorId)
+    {
+        if (StudentId != actorId) throw BusinessException.Missing();
+        if (Status != Draft) throw BusinessException.Conflict("ลบได้เฉพาะแบบร่างเท่านั้น");
+    }
+
     /// <summary>The teacher's reason from the latest return, shown to the student.</summary>
     public string? LastRejectReason =>
         _history.Where(h => h.ToStatus == Rejected).OrderByDescending(h => h.Sequence).FirstOrDefault()?.Reason;

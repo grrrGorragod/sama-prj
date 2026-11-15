@@ -9,6 +9,7 @@ import {
   Pencil,
   ArrowRight,
   Paperclip,
+  Trash2,
 } from "lucide-react";
 import type { Me, Activity, Detail, AttachmentInfo } from "../lib/types";
 import { api, date, statusNames } from "../lib/api";
@@ -67,13 +68,32 @@ export function ActivityDetail({
       void detail.refetch();
     },
   });
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const remove = useMutation({
+    mutationFn: () =>
+      api("/activities/" + id, {
+        method: "DELETE",
+        body: JSON.stringify({
+          expectedVersion: detail.data?.activity.version,
+        }),
+      }),
+    onSuccess: () => {
+      notify("ลบแบบร่างเรียบร้อยแล้ว");
+      onClose();
+    },
+    onError: () => {
+      // the draft may have changed or already be gone: show the latest state
+      setConfirmDelete(false);
+      void detail.refetch();
+    },
+  });
   const a = detail.data?.activity;
   return (
     <Modal
       variant="page"
       title="ดูกิจกรรม"
       onClose={() => {
-        if (!mutation.isPending) onClose();
+        if (!mutation.isPending && !remove.isPending) onClose();
       }}
     >
       {detail.isPending ? (
@@ -174,6 +194,7 @@ export function ActivityDetail({
               (a.status === "DRAFT" || a.status === "REJECTED") && (
                 <button
                   className="button primary full-width"
+                  disabled={remove.isPending}
                   onClick={() => onEdit(a)}
                 >
                   <Pencil size={17} />
@@ -181,6 +202,47 @@ export function ActivityDetail({
                   <ArrowRight size={17} />
                 </button>
               )}
+            {me.role === "STUDENT" && a.status === "DRAFT" && (
+              <div className="detail-delete">
+                {remove.error && <ErrorBox error={remove.error} />}
+                {confirmDelete ? (
+                  <>
+                    <p className="muted small">
+                      ลบแบบร่างนี้พร้อมไฟล์หลักฐานที่แนบไว้ทั้งหมด
+                      และไม่สามารถกู้คืนได้
+                    </p>
+                    <div className="modal-actions">
+                      <button
+                        className="button secondary"
+                        disabled={remove.isPending}
+                        onClick={() => setConfirmDelete(false)}
+                      >
+                        ยกเลิก
+                      </button>
+                      <button
+                        className="button danger"
+                        disabled={remove.isPending}
+                        onClick={() => remove.mutate()}
+                      >
+                        <Trash2 size={17} />
+                        {remove.isPending ? "กำลังลบ…" : "ยืนยันลบแบบร่าง"}
+                      </button>
+                    </div>
+                  </>
+                ) : (
+                  <button
+                    className="button danger-outline full-width"
+                    onClick={() => {
+                      remove.reset();
+                      setConfirmDelete(true);
+                    }}
+                  >
+                    <Trash2 size={17} />
+                    ลบแบบร่าง
+                  </button>
+                )}
+              </div>
+            )}
             {me.role === "TEACHER" && a.status === "PENDING" && (
               <div className="detail-review">
                 {decision === "REJECT" && (

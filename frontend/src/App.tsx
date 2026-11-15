@@ -9,7 +9,6 @@ import {
   LogOut,
   Plus,
   ChevronDown,
-  Menu,
   X,
   CheckCircle2,
   LayoutGrid,
@@ -74,7 +73,6 @@ export default function App() {
   const me = useQuery({ queryKey: ["me"], queryFn: () => api<Me>("/me") });
   const [route, setRoute] = useState<Route>(initialRoute);
   const [termId, setTermId] = useState("");
-  const [mobile, setMobile] = useState(false);
   const [toast, setToast] = useState("");
   const [error, setError] = useState<unknown>();
   const [editor, setEditor] = useState<{
@@ -132,7 +130,6 @@ export default function App() {
   function navigate(next: Route) {
     window.location.hash = next;
     setRoute(next);
-    setMobile(false);
     window.scrollTo({ top: 0 });
   }
   function done(message: string) {
@@ -157,7 +154,6 @@ export default function App() {
       setEditor(null);
       setDetail(null);
       setTermId("");
-      setMobile(false);
       setToast("");
       setError(undefined);
       navigate("dashboard");
@@ -226,7 +222,7 @@ export default function App() {
     <div
       className={`app-shell ${student ? "student-app" : "teacher-app"} route-${active}${recoveryUser ? " session-locked" : ""}`}
     >
-      <aside className={"sidebar " + (mobile ? "is-open" : "")}>
+      <aside className="sidebar">
         <a
           className="brand"
           href="#dashboard"
@@ -237,13 +233,6 @@ export default function App() {
             SAMA<small>Student Activity Management</small>
           </strong>
         </a>
-        <button
-          className="mobile-close icon-button"
-          aria-label="ปิดเมนู"
-          onClick={() => setMobile(false)}
-        >
-          <X />
-        </button>
         <nav>
           {nav.map((n) => (
             <button
@@ -277,19 +266,9 @@ export default function App() {
           </button>
         </div>
       </aside>
-      {mobile && (
-        <div className="sidebar-scrim" onClick={() => setMobile(false)} />
-      )}
       <div className="workspace">
         <header className="topbar">
           <div className="breadcrumb">
-            <button
-              className="mobile-menu icon-button"
-              aria-label="เปิดเมนู"
-              onClick={() => setMobile(true)}
-            >
-              <Menu size={22} />
-            </button>
             <strong>{titles[active]}</strong>
           </div>
           <div className="topbar-right">

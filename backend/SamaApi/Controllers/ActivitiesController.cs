@@ -26,6 +26,13 @@ public class ActivitiesController(ActivityService activities, AttachmentService 
     [Authorize(Roles = "STUDENT"), HttpPatch("{id:long}")]
     public Task<ActivityItem> Edit(long id, SaveRequest body) => activities.EditAsync(id, body);
 
+    [Authorize(Roles = "STUDENT"), HttpDelete("{id:long}")]
+    public async Task<IActionResult> Delete(long id, DeleteActivityRequest body)
+    {
+        await activities.DeleteAsync(id, body.ExpectedVersion);
+        return NoContent();
+    }
+
     [Authorize(Roles = "STUDENT"), HttpPost("{id:long}/submit")]
     public Task<ActivityItem> Submit(long id, SubmitRequest body) => activities.SubmitAsync(id, body);
 

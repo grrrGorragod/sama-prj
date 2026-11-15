@@ -3619,3 +3619,8 @@ input[readonly] {
 .reference-category-art > img ~ i {
   display: none;
 }
+.detail-delete {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}

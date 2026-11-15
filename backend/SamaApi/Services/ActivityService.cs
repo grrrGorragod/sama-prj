@@ -5,7 +5,8 @@ using SamaApi.Repositories;
 
 namespace SamaApi.Services;
 
-public class ActivityService(CurrentUser current, ActivityRepository activities, AcademicRepository academic, UserRepository users)
+public class ActivityService(CurrentUser current, ActivityRepository activities, AcademicRepository academic, UserRepository users,
+    IEvidenceStorage storage)
 {
     public async Task<ActivityItem> CreateAsync(SaveRequest p)
     {
@@ -46,6 +47,27 @@ public class ActivityService(CurrentUser current, ActivityRepository activities,
         a.Submit(a.StudentId, reviewer, DateTime.UtcNow);
         await activities.SaveAsync();
         return ActivityItem.From(a);
+    }
+
+    /// <summary>
+    /// Deletes a draft together with its status history and evidence files. Anything already sent to a teacher is kept.
+    /// </summary>
+    public async Task DeleteAsync(long id, long? expectedVersion)
+    {
+        var student = await current.StudentAsync();
+        var a = await activities.GetAsync(id) ?? throw BusinessException.Missing();
+        a.RequireDeletable(student.Id);
+        CheckVersion(a, expectedVersion);
+
+        var files = await activities.AttachmentsAsync(id);
+        // history rows are tracked with the activity and attachment rows cascade in the database
+        activities.Remove(a);
+        await activities.SaveAsync();
+
+        foreach (var file in files)
+        {
+            try { await storage.DeleteAsync(file.StoragePath); } catch { /* the row is gone; an orphan file is harmless */ }
+        }
     }
 
     public async Task<ActivityDetail> DetailAsync(long id)

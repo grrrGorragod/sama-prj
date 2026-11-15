@@ -170,9 +170,17 @@ test("mobile layout, navigation, draft and login validation", async ({
     .locator(".mobile-bottom")
     .getByRole("button", { name: "กิจกรรม", exact: true })
     .click();
+  // phones use the bottom menu only: no side menu and no hamburger button
+  await expect(page.locator(".sidebar")).toBeHidden();
+  await expect(
+    page.getByRole("button", { name: "เปิดเมนู", exact: true }),
+  ).toHaveCount(0);
   await page
-    .getByRole("button", { name: "รายการกิจกรรม", exact: true })
-    .last()
+    .locator(".mobile-bottom")
+    .getByRole("button", { name: "หน้าหลัก", exact: true })
+    .click();
+  await page
+    .getByRole("button", { name: "จัดการกิจกรรม", exact: true })
     .click();
   await page.getByLabel("กรองสถานะกิจกรรม").selectOption("DRAFT");
   await expect(
@@ -188,7 +196,10 @@ test("mobile layout, navigation, draft and login validation", async ({
       .getByRole("button", { name: "แก้ไข / ส่งกิจกรรม" }),
   ).toBeVisible();
   await page.getByRole("button", { name: "ปิดหน้าต่าง", exact: true }).click();
-  await page.getByRole("button", { name: "เปิดเมนู", exact: true }).click();
+  await page
+    .locator(".mobile-bottom")
+    .getByRole("button", { name: "บัญชี", exact: true })
+    .click();
   await page.getByRole("button", { name: "ออกจากระบบ", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "เข้าสู่ระบบ", exact: true }),

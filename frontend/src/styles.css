@@ -457,9 +457,7 @@ a:focus-visible {
     sans-serif;
   padding: 14px 0 25px;
 }
-.mobile-bottom,
-.mobile-menu,
-.mobile-close {
+.mobile-bottom {
   display: none;
 }
 .person-avatar {
@@ -2283,27 +2281,9 @@ a:focus-visible {
   }
 }
 @media (max-width: 760px) {
+  /* on phones the bottom menu replaces the side menu */
   .sidebar {
-    transform: translateX(-100%);
-    transition: transform 0.2s;
-    width: 250px;
-    padding: 28px 20px;
-  }
-  .sidebar.is-open {
-    transform: translateX(0);
-  }
-  .sidebar-scrim {
-    position: fixed;
-    inset: 0;
-    z-index: 29;
-    background: #24202c55;
-    backdrop-filter: blur(2px);
-  }
-  .mobile-close {
-    display: flex;
-    position: absolute;
-    right: 7px;
-    top: 7px;
+    display: none;
   }
   .workspace {
     margin-left: 0;
@@ -2319,10 +2299,6 @@ a:focus-visible {
   .breadcrumb > strong {
     font-size: 13px;
     font-weight: 550;
-  }
-  .mobile-menu {
-    display: flex;
-    margin-left: -5px;
   }
   .topbar-right {
     gap: 8px;
